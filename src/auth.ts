@@ -34,8 +34,8 @@ export async function createSession(c: Context, userId: string): Promise<void> {
         path: '/',
         maxAge: sessionDuration,
         httpOnly: true,
-        secure: isProduction,
-        sameSite: 'Strict'
+        secure: true, // Always use secure for HTTPS
+        sameSite: 'None' // Allow cross-site usage if needed
     });
 }
 

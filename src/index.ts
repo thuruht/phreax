@@ -36,16 +36,18 @@ const app = new Hono<{ Bindings: Env }>();
 // Basic CORS headers for API routes
 app.use('/api/*', async (c, next) => {
     // Add CORS headers
-    c.header('Access-Control-Allow-Origin', '*');
+    const origin = c.req.header('Origin') || '*';
+    c.header('Access-Control-Allow-Origin', origin);
     c.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     c.header('Access-Control-Allow-Credentials', 'true');
     
+    // Handle preflight requests
     if (c.req.method === 'OPTIONS') {
         return c.text('', 200);
     }
     
-    return next();
+    await next();
 });
 
 // Middleware to check authentication

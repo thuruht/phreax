@@ -215,7 +215,10 @@ async function loadContacts() {
     const loadingSpinner = document.getElementById('loading-spinner');
     
     try {
-        loadingSpinner.style.display = 'block';
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'block';
+        }
+        
         const response = await fetch('/api/contacts', {
             credentials: 'include'
         });
@@ -231,12 +234,18 @@ async function loadContacts() {
         console.error('Error loading contacts:', error);
         contactsContainer.innerHTML = '<p class="error-message">Error loading contacts. Please check your connection.</p>';
     } finally {
-        loadingSpinner.style.display = 'none';
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'none';
+        }
     }
 }
 
 function renderContacts(contactsToRender) {
     const loadingSpinner = document.getElementById('loading-spinner');
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'none';
+    }
+    
     contactsContainer.innerHTML = '';
     
     if (contactsToRender.length === 0) {
