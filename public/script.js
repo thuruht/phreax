@@ -170,7 +170,8 @@ async function handleLogin(e) {
             submitButton.innerHTML = '<span style="color: #40ff80;">[F&F ACCESS GRANTED]</span>';
             setTimeout(() => {
                 showDirectory();
-                loadContacts();
+                // Check authentication status before loading contacts
+                checkAuthAndLoadContacts();
             }, 1000);
             loginError.classList.add('hidden');
         } else {
@@ -208,6 +209,38 @@ async function handleLogout() {
 function showDirectory() {
     loginSection.classList.add('hidden');
     directorySection.classList.remove('hidden');
+}
+
+// Check auth status before loading contacts
+async function checkAuthAndLoadContacts() {
+    try {
+        // First verify the session is valid
+        const response = await fetch('/api/auth/status', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.authenticated) {
+                // If authenticated, load contacts
+                await loadContacts();
+            } else {
+                // If not authenticated, show login
+                showLogin();
+                const loginError = document.getElementById('login-error');
+                loginError.textContent = 'Session expired. Please log in again.';
+                loginError.classList.remove('hidden');
+            }
+        } else {
+            console.error('Failed to check authentication status');
+            // Try loading contacts anyway
+            await loadContacts();
+        }
+    } catch (error) {
+        console.error('Error checking auth status:', error);
+        // Try loading contacts anyway
+        await loadContacts();
+    }
 }
 
 // Contact management functions
