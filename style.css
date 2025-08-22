@@ -1,0 +1,1192 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    background-color: #000000;
+    color: #00ff41;
+    line-height: 1.6;
+    padding: 20px;
+    background-image:
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.03) 2px,
+            rgba(0, 255, 65, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.03) 2px,
+            rgba(0, 255, 65, 0.03) 4px
+        ),
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 65, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 40%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Matrix rain effect background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" viewBox="0 0 200 400"><text x="10" y="25" font-size="14" fill="%2300ff4125" font-family="monospace">カ</text><text x="35" y="50" font-size="12" fill="%2300ff4120" font-family="monospace">1</text><text x="60" y="75" font-size="16" fill="%2300ff4130" font-family="monospace">0</text><text x="85" y="100" font-size="13" fill="%2300ff4115" font-family="monospace">タ</text><text x="110" y="125" font-size="15" fill="%2300ff4122" font-family="monospace">1</text><text x="135" y="150" font-size="11" fill="%2300ff4118" font-family="monospace">0</text><text x="160" y="175" font-size="14" fill="%2300ff4128" font-family="monospace">ナ</text><text x="185" y="200" font-size="12" fill="%2300ff4112" font-family="monospace">1</text><text x="15" y="225" font-size="13" fill="%2300ff4135" font-family="monospace">ハ</text><text x="40" y="250" font-size="16" fill="%2300ff4108" font-family="monospace">0</text><text x="65" y="275" font-size="14" fill="%2300ff4125" font-family="monospace">マ</text><text x="90" y="300" font-size="12" fill="%2300ff4115" font-family="monospace">1</text><text x="115" y="325" font-size="15" fill="%2300ff4130" font-family="monospace">ヤ</text><text x="140" y="350" font-size="13" fill="%2300ff4110" font-family="monospace">0</text><text x="165" y="375" font-size="11" fill="%2300ff4120" font-family="monospace">ラ</text><text x="190" y="400" font-size="14" fill="%2300ff4118" font-family="monospace">1</text><text x="25" y="45" font-size="12" fill="%2300ff4105" font-family="monospace">ワ</text><text x="50" y="70" font-size="16" fill="%2300ff4132" font-family="monospace">0</text><text x="75" y="95" font-size="13" fill="%2300ff4115" font-family="monospace">サ</text><text x="100" y="120" font-size="14" fill="%2300ff4125" font-family="monospace">1</text><text x="125" y="145" font-size="11" fill="%2300ff4108" font-family="monospace">ガ</text><text x="150" y="170" font-size="15" font-family="monospace" fill="%2300ff4122">0</text><text x="175" y="195" font-size="12" fill="%2300ff4118" font-family="monospace">バ</text></svg>'),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="600" viewBox="0 0 300 600"><text x="20" y="30" font-size="15" fill="%2300ff4118" font-family="monospace">Z</text><text x="70" y="80" font-size="12" fill="%2300ff4125" font-family="monospace">0</text><text x="120" y="130" font-size="14" fill="%2300ff4110" font-family="monospace">X</text><text x="170" y="180" font-size="16" fill="%2300ff4135" font-family="monospace">1</text><text x="220" y="230" font-size="11" fill="%2300ff4105" font-family="monospace">A</text><text x="270" y="280" font-size="13" fill="%2300ff4120" font-family="monospace">0</text><text x="45" y="55" font-size="14" fill="%2300ff4115" font-family="monospace">Q</text><text x="95" y="105" font-size="12" fill="%2300ff4130" font-family="monospace">1</text><text x="145" y="155" font-size="15" fill="%2300ff4108" font-family="monospace">W</text><text x="195" y="205" font-size="13" fill="%2300ff4125" font-family="monospace">0</text><text x="245" y="255" font-size="16" fill="%2300ff4112" font-family="monospace">E</text><text x="295" y="305" font-size="11" fill="%2300ff4122" font-family="monospace">1</text><text x="10" y="355" font-size="14" fill="%2300ff4118" font-family="monospace">R</text><text x="60" y="405" font-size="12" fill="%2300ff4128" font-family="monospace">0</text><text x="110" y="455" font-size="15" fill="%2300ff4115" font-family="monospace">T</text><text x="160" y="505" font-size="13" fill="%2300ff4132" font-family="monospace">1</text><text x="210" y="555" font-size="16" fill="%2300ff4108" font-family="monospace">Y</text></svg>'),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="300" viewBox="0 0 150 300"><text x="5" y="20" font-size="13" fill="%2300ff4120" font-family="monospace">ア</text><text x="30" y="45" font-size="11" fill="%2300ff4115" font-family="monospace">3</text><text x="55" y="70" font-size="15" fill="%2300ff4125" font-family="monospace">イ</text><text x="80" y="95" font-size="12" fill="%2300ff4110" font-family="monospace">7</text><text x="105" y="120" font-size="14" fill="%2300ff4118" font-family="monospace">ウ</text><text x="130" y="145" font-size="16" fill="%2300ff4132" font-family="monospace">9</text><text x="15" y="170" font-size="11" fill="%2300ff4108" font-family="monospace">エ</text><text x="40" y="195" font-size="13" fill="%2300ff4122" font-family="monospace">2</text><text x="65" y="220" font-size="14" fill="%2300ff4128" font-family="monospace">オ</text><text x="90" y="245" font-size="12" fill="%2300ff4115" font-family="monospace">5</text><text x="115" y="270" font-size="15" fill="%2300ff4130" font-family="monospace">キ</text><text x="140" y="295" font-size="13" fill="%2300ff4105" font-family="monospace">8</text></svg>');
+    background-size: 200px 400px, 300px 600px, 150px 300px;
+    background-position: 0 0, 100px -50px, 250px -100px;
+    animation: matrix-rain-1 25s linear infinite, matrix-rain-2 30s linear infinite, matrix-rain-3 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+@keyframes matrix-rain-1 {
+    0% { background-position: 0 -400px, 100px -650px, 250px -400px; }
+    100% { background-position: 0 100vh, 100px calc(100vh + 50px), 250px calc(100vh + 100px); }
+}
+
+@keyframes matrix-rain-2 {
+    0% { background-position: 50px -600px, 200px -400px, 350px -300px; }
+    100% { background-position: 50px calc(100vh + 100px), 200px 100vh, 350px calc(100vh + 200px); }
+}
+
+@keyframes matrix-rain-3 {
+    0% { background-position: 150px -300px, 300px -500px, 450px -350px; }
+    100% { background-position: 150px calc(100vh + 150px), 300px calc(100vh + 50px), 450px calc(100vh + 100px); }
+}
+
+/* Terminal scan lines */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        transparent 50%,
+        rgba(0, 255, 65, 0.05) 50%
+    );
+    background-size: 100% 4px;
+    animation: scanlines 0.1s linear infinite;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+@keyframes scanlines {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 4px; }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 2px solid #00ff41;
+    background: linear-gradient(135deg,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 20, 0, 0.9) 50%,
+        rgba(0, 0, 0, 0.95) 100%);
+    box-shadow:
+        0 0 50px rgba(0, 255, 65, 0.3),
+        inset 0 0 50px rgba(0, 255, 65, 0.1),
+        0 0 100px rgba(0, 255, 65, 0.2);
+    min-height: calc(100vh - 40px);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    position: relative;
+    border-radius: 15px;
+    animation: terminal-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes terminal-glow {
+    0% {
+        box-shadow:
+            0 0 50px rgba(0, 255, 65, 0.3),
+            inset 0 0 50px rgba(0, 255, 65, 0.1),
+            0 0 100px rgba(0, 255, 65, 0.2);
+    }
+    100% {
+        box-shadow:
+            0 0 70px rgba(0, 255, 65, 0.4),
+            inset 0 0 70px rgba(0, 255, 65, 0.15),
+            0 0 120px rgba(0, 255, 65, 0.3);
+    }
+}
+
+/* Terminal border decoration */
+.container::before {
+    content: '>>> F&F_PHONEBOOK_TERMINAL_v2.0 - CONNECTION_ESTABLISHED <<<';
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    background: #000;
+    color: #00ff41;
+    padding: 5px 15px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 1px solid #00ff41;
+    border-radius: 3px;
+    animation: blink-terminal 1.5s linear infinite;
+}
+
+@keyframes blink-terminal {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.7; }
+}
+
+/* Terminal Status Bar */
+.terminal-status {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 15px;
+    background: linear-gradient(90deg, #000, #001100, #000);
+    border: 1px solid #00ff41;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-item {
+    color: #40ff80;
+}
+
+.status-secure, .status-encrypted, .status-active {
+    color: #00ff41;
+    font-weight: bold;
+    animation: status-blink 2s ease-in-out infinite;
+}
+
+@keyframes status-blink {
+    0%, 80%, 100% { opacity: 1; }
+    90% { opacity: 0.7; }
+}
+
+.terminal-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #00ff41;
+    border-radius: 5px;
+}
+
+.terminal-prompt, .prompt-text {
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff41;
+    font-size: 12px;
+    animation: terminal-cursor 1s infinite;
+}
+
+.terminal-prompt::after, .prompt-text::after {
+    content: '_';
+    animation: cursor-blink 1s infinite;
+    margin-left: 5px;
+}
+
+.terminal-prompt-login {
+    margin: 15px 0;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.9);
+    border-left: 3px solid #00ff41;
+    border-radius: 3px;
+}
+
+.terminal-output {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #00ff41;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.output-line {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #40ff80;
+    margin: 5px 0;
+    animation: type-out 2s ease-out;
+}
+
+@keyframes type-out {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.output-line:nth-child(even) {
+    color: #00cc33;
+}
+
+/* Enhanced loading animation */
+.loading-text {
+    font-family: 'Share Tech Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.loading-char {
+    animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+.loading-char:nth-child(1) { animation-delay: 0s; }
+.loading-char:nth-child(2) { animation-delay: 0.2s; }
+.loading-char:nth-child(3) { animation-delay: 0.4s; }
+.loading-char:nth-child(7) { animation-delay: 0.6s; }
+.loading-char:nth-child(8) { animation-delay: 0.8s; }
+.loading-char:nth-child(9) { animation-delay: 1s; }
+
+@keyframes loading-pulse {
+    0%, 60%, 100% {
+        opacity: 1;
+        color: #00ff41;
+    }
+    30% {
+        opacity: 0.3;
+        color: #40ff80;
+    }
+}
+
+/* Glitch effects for errors */
+.error-message {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(255, 102, 0, 0.1));
+    border: 2px solid #ff6600;
+    color: #ff6600;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    animation: error-glitch 0.5s ease-in-out infinite;
+}
+
+@keyframes error-glitch {
+    0%, 90%, 100% {
+        transform: translate(0);
+        filter: hue-rotate(0deg);
+    }
+    95% {
+        transform: translate(-2px, 1.87px);
+        filter: hue-rotate(87deg);
+    }
+}
+
+.error-message::before {
+    content: '[ERROR] ';
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.success-message {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 65, 0.1));
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    animation: success-pulse 2s ease-in-out infinite;
+}
+
+@keyframes success-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+    }
+}
+
+.success-message::before {
+    content: '[SUCCESS] ';
+    color: #40ff80;
+    font-weight: bold;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px dashed #00ff41;
+    position: relative;
+    animation: flicker-header 4s linear infinite;
+}
+
+@keyframes flicker-header {
+    0%, 95%, 100% { opacity: 1; }
+    96%, 99% { opacity: 0.8; }
+}
+
+/* ASCII art decoration */
+header::before {
+    content: ' ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓';
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff41;
+    font-size:4px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+    animation: scroll-left 15s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+h1, h2, h3 {
+    color: #00ff41;
+    text-shadow:
+        0 0 10px rgba(0, 255, 65, 0.8),
+        0 0 20px rgba(0, 255, 65, 0.6),
+        0 0 30px rgba(0, 255, 65, 0.4);
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    position: relative;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    animation: glitch-text 2s infinite;
+    background: linear-gradient(45deg, #00ff41, #00cc33, #00ff41);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+@keyframes glitch-text {
+    0%, 90%, 100% {
+        transform: translate(0);
+        color: #00ff41;
+    }
+    92% {
+        transform: translate(-2px, 2px);
+        color: #ff0040;
+    }
+    94% {
+        transform: translate(2px, -2px);
+        color: #40ff00;
+    }
+    96% {
+        transform: translate(-1px, 1px);
+        color: #0040ff;
+    }
+}
+
+h1::after {
+    content: '_';
+    animation: cursor-blink 1s infinite;
+    color: #00ff41;
+}
+
+@keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+}
+
+h2::before {
+    content: '# ';
+    color: #cc0000;
+    font-weight: bold;
+}
+
+h2::after {
+    content: ' #';
+    color: #cc0000;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+h3::before {
+    content: '>> ';
+    color: #cc0000;
+    font-size: 0.8em;
+}
+
+.section {
+    margin-bottom: 40px;
+    padding: 25px;
+    border: 2px solid #00ff41;
+    background: linear-gradient(135deg,
+        rgba(0, 30, 0, 0.7) 0%,
+        rgba(0, 50, 0, 0.3) 50%,
+        rgba(0, 30, 0, 0.7) 100%);
+    border-radius: 10px;
+    box-shadow:
+        0 5px 25px rgba(0, 255, 65, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff41, transparent);
+    animation: scan-line 3s linear infinite;
+}
+
+@keyframes scan-line {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Terminal prompt indicators */
+.section::after {
+    content: '[ACTIVE]';
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 9px;
+    color: #00ff41;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid #00ff41;
+    animation: pulse-secure 2s ease-in-out infinite;
+}
+
+@keyframes pulse-secure {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.required {
+    color: #ff6600;
+}
+
+input, textarea, button, select {
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #001100, #002200);
+    border: 2px solid #00ff41;
+    color: #00ff41;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #40ff80;
+    background: linear-gradient(135deg, #002200, #003300);
+    box-shadow:
+        0 0 15px rgba(0, 255, 65, 0.4),
+        inset 0 2px 5px rgba(0, 0, 0, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Input field terminal effect */
+input::placeholder, textarea::placeholder {
+    color: rgba(0, 255, 65, 0.5);
+    font-style: italic;
+}
+
+input:not(:focus)::after, textarea:not(:focus)::after {
+    content: '_';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00ff41;
+    animation: cursor-blink 1s infinite;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+button {
+    background: linear-gradient(135deg, #003300, #005500, #003300);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid #00ff41;
+    box-shadow:
+        0 4px 15px rgba(0, 255, 65, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #005500, #007700, #005500);
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 25px rgba(0, 255, 65, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: #40ff80;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow:
+        0 2px 10px rgba(0, 255, 65, 0.4),
+        inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(135deg, #222, #333);
+    border-color: #666;
+    color: #666;
+    box-shadow: none;
+}
+
+/* Glitch effect for buttons */
+button.glitch {
+    animation: glitch-button 0.3s ease-in-out;
+}
+
+@keyframes glitch-button {
+    0%, 100% { transform: translateY(-2px); }
+    20% { transform: translate(-1px, -1px); }
+    40% { transform: translate(1px, -3px); }
+    60% { transform: translate(-1px, -2px); }
+    80% { transform: translate(1px, -2px); }
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #440000, #660000, #440000);
+    margin-top: 15px;
+    border-color: #ff4444;
+    animation: danger-pulse 2s ease-in-out infinite;
+}
+
+@keyframes danger-pulse {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 25px rgba(255, 68, 68, 0.5);
+    }
+}
+
+.delete-btn:hover {
+    background: linear-gradient(135deg, #660000, #880000, #660000);
+    border-color: #ff6666;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+    box-shadow:
+        0 6px 25px rgba(255, 68, 68, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.directory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.directory-header button {
+    width: auto;
+    min-width: 100px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.contact-card {
+    border: 2px solid #00ff41;
+    padding: 20px;
+    background: linear-gradient(135deg,
+        rgba(0, 20, 0, 0.9) 0%,
+        rgba(0, 40, 0, 0.7) 50%,
+        rgba(0, 20, 0, 0.9) 100%);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 5px 20px rgba(0, 255, 65, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        #00ff41,
+        transparent
+    );
+    animation: card-scan 4s linear infinite;
+}
+
+@keyframes card-scan {
+    0%, 50% { opacity: 0; }
+    51%, 100% { opacity: 1; }
+}
+
+.contact-card::after {
+    content: '[DATA]';
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 8px;
+    color: #00ff41;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid #00ff41;
+    opacity: 0.6;
+}
+
+.contact-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow:
+        0 15px 40px rgba(0, 255, 65, 0.4),
+        0 5px 20px rgba(0, 255, 65, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: #40ff80;
+    background: linear-gradient(135deg,
+        rgba(0, 30, 0, 0.95) 0%,
+        rgba(0, 60, 0, 0.8) 50%,
+        rgba(0, 30, 0, 0.95) 100%);
+}
+
+.contact-card:hover::after {
+    content: '[ACTIVE]';
+    opacity: 1;
+    animation: blink-active 0.5s linear infinite;
+}
+
+@keyframes blink-active {
+    0%, 50% { color: #00ff41; }
+    51%, 100% { color: #40ff80; }
+}
+
+.contact-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.contact-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-right: 20px;
+    border: 2px solid #00ff41;
+    object-fit: cover;
+    background: linear-gradient(135deg, #001100, #002200);
+    box-shadow:
+        0 0 15px rgba(0, 255, 65, 0.4),
+        inset 0 2px 5px rgba(0, 0, 0, 0.5);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.contact-image::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #00ff41, transparent, #00ff41);
+    border-radius: 8px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.contact-card:hover .contact-image::after {
+    opacity: 1;
+    animation: rotate-border 2s linear infinite;
+}
+
+@keyframes rotate-border {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.contact-name {
+    font-weight: bold;
+    font-size: 1.3rem;
+    flex: 1;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #00ff41;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+    position: relative;
+}
+
+.contact-name::before {
+    content: '> ';
+    color: #ff6600;
+    font-size: 0.8em;
+}
+
+.contact-name::after {
+    content: ' _';
+    animation: cursor-blink 1.5s infinite;
+    color: #00ff41;
+}
+
+.contact-details {
+    margin-top: 15px;
+}
+
+.contact-field {
+    margin-bottom: 8px;
+    display: flex;
+    word-break: break-all;
+}
+
+.contact-field-label {
+    font-weight: bold;
+    min-width: 90px;
+    margin-right: 15px;
+    color: #40ff80;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.contact-field-label::before {
+    content: '[';
+    color: #ff6600;
+    margin-right: 2px;
+}
+
+.contact-field-label::after {
+    content: ']';
+    color: #ff6600;
+    margin-left: 2px;
+}
+
+.contact-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.contact-actions button {
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-content {
+    background-color: #001100;
+    border: 2px solid #00ff00;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+}
+
+.close, .close-view {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #ff6600;
+    font-weight: bold;
+}
+
+.close:hover, .close-view:hover {
+    color: #ff8800;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #00ff41;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.tabs::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff6600, #00ff41, #ff6600);
+    animation: tab-glow 3s linear infinite;
+    width: 0;
+}
+
+@keyframes tab-glow {
+    0% { width: 0; left: 0; }
+    50% { width: 50%; left: 25%; }
+    100% { width: 0; left: 100%; }
+}
+
+.tab {
+    padding: 15px 25px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #002200, #003300);
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    border: 2px solid #00ff41;
+    border-bottom: none;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.5s;
+}
+
+.tab:hover {
+    background: linear-gradient(135deg, #003300, #005500);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 255, 65, 0.3);
+    color: #40ff80;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+}
+
+.tab:hover::before {
+    left: 100%;
+}
+
+.tab.active {
+    background: linear-gradient(135deg, #004400, #006600);
+    border-bottom: 3px solid #40ff80;
+    transform: translateY(-5px);
+    box-shadow:
+        0 8px 30px rgba(0, 255, 65, 0.4),
+        inset 0 2px 10px rgba(0, 255, 65, 0.2);
+    color: #40ff80;
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
+}
+
+.tab.active::after {
+    content: '[ACTIVE]';
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    font-size: 8px;
+    background: #ff6600;
+    color: #000;
+    padding: 2px 4px;
+    border-radius: 2px;
+    animation: tab-active-blink 1s infinite;
+}
+
+@keyframes tab-active-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.7; }
+}
+
+.error-message {
+    background-color: rgba(255, 102, 0, 0.1);
+    border: 1px solid #ff6600;
+    color: #ff6600;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+
+.success-message {
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: #88ff88;
+}
+
+.image-preview {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 150px;
+    max-height: 150px;
+    border: 1px solid #00ff00;
+    border-radius: 5px;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.contact-image-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #00ff00;
+    object-fit: cover;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    color: #88ff88;
+    font-size: 11px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .contacts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .directory-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .directory-header button {
+        width: 100%;
+    }
+
+    .tabs {
+        justify-content: center;
+    }
+
+    .tab {
+        flex: 1;
+        text-align: center;
+        margin-right: 5px;
+    }
+
+    .contact-actions {
+        flex-direction: column;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+
+    .contact-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .contact-image {
+        margin: 0 0 10px 0;
+    }
+
+    .contact-field {
+        flex-direction: column;
+    }
+
+    .contact-field-label {
+        min-width: auto;
+        margin-right: 0;
+        margin-bottom: 2px;
+    }
+}
+
+/* Animation for contact cards */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contact-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    border: 2px solid transparent;
+    border-top: 2px solid #00ff00;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 10px;
+}
