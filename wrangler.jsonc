@@ -26,8 +26,14 @@
   "r2_buckets": [
     {
       "binding": "phr3img",
-      "bucket_name": "phr3",
-      "public_url": "https://phr3img.farewellcafe.com"
+      "bucket_name": "phr3"
+    }
+  ],
+  
+  "routes": [
+    {
+      "pattern": "phr3img.farewellcafe.com/*",
+      "custom_domain": true
     }
   ],
   

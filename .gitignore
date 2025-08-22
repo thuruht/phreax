@@ -5,11 +5,30 @@ jspm_packages/
 # Cloudflare Workers specific
 .wrangler/
 .dev.vars
+.dev.vars.*
+.env.local
+.cloudflare/
 dist/
 worker/
+.cfsetup/
+
+# Secrets and Credentials
+.cloudflarerc
+.cloudflare.auth.json
+creds.json
+secrets.json
+*_credentials.json
+
+# Wrangler temp files
+.tmp/
+.cache/
+.esbuild/
+.miniflare/
+.wrangler-cache/
 
 # TypeScript cache
 *.tsbuildinfo
+.dts/
 
 # Optional npm cache directory
 .npm
@@ -38,7 +57,33 @@ lerna-debug.log*
 .vscode/
 *.swp
 *.swo
+.vs/
+*.sublime-project
+*.sublime-workspace
 
 # Operating System Files
 .DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Build artifacts
+build/
+dist/
+out/
+.next/
+.nuxt/
+.output/
