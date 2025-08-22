@@ -34,6 +34,11 @@
     "SESSION_DURATION": "604800"
   },
   
+  "logs": {
+    "enabled": true,
+    "sampling_rate": 1.0
+  },
+  
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"

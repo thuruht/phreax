@@ -97,6 +97,12 @@ app.get('/api/auth/status', async (c) => {
 // Contacts routes
 app.get('/api/contacts', async (c) => {
     try {
+        // Check authentication first
+        const userId = await validateSession(c);
+        if (!userId) {
+            return c.json({ error: 'Authentication required' }, 401);
+        }
+        
         const { results } = await c.env.DB.prepare(`
             SELECT id, name, phone, discord, instagram, telegram, signal, address, notes, image_url, created_at, updated_at
             FROM contacts
@@ -112,6 +118,12 @@ app.get('/api/contacts', async (c) => {
 
 app.post('/api/contacts', async (c) => {
     try {
+        // Check authentication first
+        const userId = await validateSession(c);
+        if (!userId) {
+            return c.json({ error: 'Authentication required' }, 401);
+        }
+        
         const contactData = await c.req.json();
         const { personal_code, ...contact } = contactData;
         
