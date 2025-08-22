@@ -30,13 +30,6 @@
     }
   ],
   
-  "routes": [
-    {
-      "pattern": "phr3img.farewellcafe.com",
-      "custom_domain": true
-    }
-  ],
-  
   "vars": {
     "SESSION_DURATION": "604800"
   },
