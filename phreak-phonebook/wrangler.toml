@@ -1,0 +1,29 @@
+name = "phreaky"
+main = "./src/index.ts"
+compatibility_date = "2024-08-22"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "phreak-db"
+database_id = "7e983d57-b97f-439f-8dd6-99b94315bc8e"
+
+[[kv_namespaces]]
+binding = "PHON_K"
+id = "f0f3f5ab204b4991880071e874c7888f"
+
+[[kv_namespaces]]
+binding = "PHREAK_KV"
+id = "30b28eb99b98432a9afc8da089471bfd"
+
+[[r2_buckets]]
+binding = "phr3img"
+bucket_name = "phr3"
+public_url = "https://phr3img.farewellcafe.com"
+
+[vars]
+SESSION_DURATION = "604800"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"

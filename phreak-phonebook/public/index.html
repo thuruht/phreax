@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farewell & Friends Phreaky Phonebook</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Terminal Status Bar -->
+        <div class="terminal-status">
+            <span class="status-item">CONNECTION: <span class="status-secure">ENCRUSTED</span></span>
+            <span class="status-item">PROTOCOL: <span class="status-encrypted">HTPLMAO</span></span>
+            <span class="status-item">STATUS: <span class="status-active">PHREAKED</span></span>
+        </div>
+        
+        <header>
+            <h1>Farewell & Friends</h1>
+            <h2>Phreaky Phonebook</h2>
+            <div class="terminal-info">
+                <span class="terminal-prompt">[root@phreakc ~]$ access_phonebook.bin</span>
+            </div>
+            <img src="./freekc.png" style="opacity: 0.87; max-width: 20vw; margin: 1rem; margin-bottom: 0;">
+        </header>
+
+        <div id="login-section" class="section">
+            <h3>Auth:</h3>
+            <div class="terminal-prompt-login">
+                <span class="prompt-text">[phreakc]$ authenticate --verify</span>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="password">Enter Directory Access Code:</label>
+                    <input type="password" id="password" required autocomplete="current-password" placeholder="Enter access code...">
+                </div>
+                <button type="submit">Access Directory</button>
+            </form>
+            <div id="login-error" class="error-message hidden"></div>
+        </div>
+
+        <div id="directory-section" class="section hidden">
+            <div class="tabs">
+                <div class="tab active" data-tab="directory">Directory</div>
+                <div class="tab" data-tab="add-contact">Add Contact</div>
+            </div>
+
+            <div id="directory-tab">
+                <div class="directory-header">
+                    <h3>Farewell & Friends Community Directory</h3>
+                    <button id="logout-btn">End Session</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search contacts...">
+                </div>
+                <div class="terminal-output">
+                    <div class="output-line">[F&F-SYS] Loading encrypted contact database...</div>
+                    <div class="output-line">[F&F-SYS] Decryption in progress...</div>
+                </div>
+                <div id="contacts-container" class="contacts-grid">
+                    <div id="loading-spinner" class="loading">
+                        <div class="loading-text">
+                            <span class="loading-char">></span>
+                            <span class="loading-char">></span>
+                            <span class="loading-char">></span>
+                            Accessing F&F database
+                            <span class="loading-char">.</span>
+                            <span class="loading-char">.</span>
+                            <span class="loading-char">.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="add-contact-tab" class="hidden">
+                <h3>Add New F&F Contact</h3>
+                <div class="terminal-prompt-login">
+                    <span class="prompt-text">[F&F-NET]$ add_contact --encrypted</span>
+                </div>
+                <form id="add-contact-form">
+                    <div class="form-group">
+                        <label for="add-name">Name: <span class="required">*</span></label>
+                        <input type="text" id="add-name" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-phone">Phone:</label>
+                        <input type="tel" id="add-phone" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-discord">Discord:</label>
+                        <input type="text" id="add-discord" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-instagram">Instagram:</label>
+                        <input type="text" id="add-instagram" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-telegram">Telegram:</label>
+                        <input type="text" id="add-telegram" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-signal">Signal:</label>
+                        <input type="text" id="add-signal" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-address">Address (optional):</label>
+                        <textarea id="add-address" maxlength="500" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-notes">Notes:</label>
+                        <textarea id="add-notes" maxlength="1000" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-image">Profile Image:</label>
+                        <input type="file" id="add-image-file" accept="image/*" title="Upload profile image file">
+                        <input type="url" id="add-image" placeholder="Or paste image URL" maxlength="500">
+                        <div id="image-preview" class="image-preview hidden">
+                            <img id="preview-img" src="" alt="Preview">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-personal-code">Personal Access Code (for future edits):</label>
+                        <input type="password" id="add-personal-code" 
+                               placeholder="Leave blank to use default 'please'" 
+                               maxlength="50" 
+                               autocomplete="new-password">
+                        <small>IMPORTANT: Keep this code safe - you'll need it to edit your contact info later!</small>
+                    </div>
+                    <button type="submit" id="add-submit-btn">Add to F&F Directory</button>
+                </form>
+                <div id="add-contact-error" class="error-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="edit-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Edit F&F Contact Record</h3>
+                <div class="terminal-prompt-login">
+                    <span class="prompt-text">[F&F-NET]$ edit_contact --verify</span>
+                </div>
+                <form id="edit-form">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label for="edit-name">Name: <span class="required">*</span></label>
+                        <input type="text" id="edit-name" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Phone:</label>
+                        <input type="tel" id="edit-phone" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-discord">Discord:</label>
+                        <input type="text" id="edit-discord" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-instagram">Instagram:</label>
+                        <input type="text" id="edit-instagram" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-telegram">Telegram:</label>
+                        <input type="text" id="edit-telegram" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-signal">Signal:</label>
+                        <input type="text" id="edit-signal" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-address">Address (optional):</label>
+                        <textarea id="edit-address" maxlength="500" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">Notes:</label>
+                        <textarea id="edit-notes" maxlength="1000" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-image">Image URL (optional):</label>
+                        <input type="url" id="edit-image" maxlength="500">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-personal-code">Access Code: <span class="required">*</span></label>
+                        <input type="password" id="edit-personal-code" required maxlength="50" autocomplete="current-password" placeholder="Enter your access code...">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit">Execute Changes</button>
+                        <button type="button" id="delete-contact-btn" class="delete-btn">Delete Record</button>
+                    </div>
+                </form>
+                <div id="edit-error" class="error-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- View Contact Modal -->
+        <div id="view-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-view">&times;</span>
+                <div id="view-contact-content">
+                    <!-- Contact details will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

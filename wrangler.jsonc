@@ -1,5 +1,5 @@
 {
-  "name": "snowy-paper-f69d",
+  "name": "phreax-phonebook",
   "main": "./src/index.ts",
   "compatibility_date": "2024-08-22",
   "compatibility_flags": ["nodejs_compat"],
@@ -32,11 +32,6 @@
   
   "vars": {
     "SESSION_DURATION": "604800"
-  },
-  
-  "logs": {
-    "enabled": true,
-    "sampling_rate": 1.0
   },
   
   "assets": {

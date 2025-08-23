@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phreax Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bunny Fonts -->
+  <link href="https://fonts.bunny.net/css?family=almendra-display:400|orbitron:400,700,900|pixelify-sans:400,500,600,700" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="container">
+    <!-- Glitch Header -->
+    <header data-text="PHREAX">PHREAX</header>
+
+    <!-- Gothic Accent Title -->
+    <h1>Terminal Access</h1>
+
+    <!-- Login Form -->
+    <form id="login-form">
+      <input type="password" id="password" placeholder="Enter Access Key" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Terminal Display -->
+    <div class="terminal" id="terminal">
+      <div class="output-line">[System] Awaiting input...</div>
+    </div>
+  </div>
+
+  <!-- Frontend Script -->
+  <script src="script.js"></script>
+</body>
+</html>

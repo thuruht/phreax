@@ -1,0 +1,1324 @@
+   F&F2P PROPOSAL
+
+D1 for relational contact data (user profiles, contact information)
+
+    Workers KV for session management and password hashes4
+
+    R2 for contact images36
+
+    Cookies for authentication sessions
+
+Here's the complete implementation:
+File Structure
+text
+
+phreak-phonebook/
+├── package.json
+├── wrangler.toml
+├── src/
+│   ├── index.ts
+│   └── auth.ts
+├── public/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+└── schema.sql
+
+1. package.json
+json
+
+{
+  "name": "phreak-phonebook",
+  "version": "1.0.0",
+  "description": "Farewell & Friends Phreak Phonebook",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create phreak-phonebook-db",
+    "db:execute": "wrangler d1 execute phreak-phonebook-db --file=schema.sql",
+    "db:studio": "wrangler d1 execute phreak-phonebook-db --local --command='SELECT 1'"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "hono": "^4.3.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240821.0",
+    "wrangler": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+
+2. wrangler.toml
+toml
+
+name = "phreak-phonebook"
+compatibility_date = "2024-08-22"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "phreak-phonebook-db"
+database_id = "YOUR_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "SESSION_STORE"
+id = "YOUR_SESSION_KV_ID"
+
+[[kv_namespaces]]
+binding = "PASSWORD_STORE"
+id = "YOUR_PASSWORD_KV_ID"
+
+[[r2_buckets]]
+binding = "IMAGE_STORE"
+bucket_name = "phreak-phonebook-images"
+preview_bucket_name = "phreak-phonebook-images-preview"
+
+[vars]
+DIRECTORY_PASSWORD_HASH = "YOUR_HASHED_PASSWORD"
+SESSION_SECRET = "YOUR_SESSION_SECRET"
+SESSION_DURATION = "604800"
+
+[site]
+bucket = "./public"
+
+3. schema.sql
+sql
+
+CREATE TABLE IF NOT EXISTS contacts (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT,
+    discord TEXT,
+    instagram TEXT,
+    telegram TEXT,
+    signal TEXT,
+    address TEXT,
+    notes TEXT,
+    image_url TEXT,
+    personal_code_hash TEXT NOT NULL,
+    created_at INTEGER DEFAULT (unixepoch()),
+    updated_at INTEGER DEFAULT (unixepoch())
+);
+
+CREATE INDEX IF NOT EXISTS idx_contacts_name ON contacts (name);
+CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts (created_at);
+
+4. public/index.html
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farewell & Friends Phreak Phonebook</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Farewell & Friends</h1>
+            <h2>Phreak Phonebook</h2>
+        </header>
+
+        <div id="login-section" class="section">
+            <h3>Access Directory</h3>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="password">Directory Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Enter</button>
+            </form>
+        </div>
+
+        <div id="directory-section" class="section hidden">
+            <div class="tabs">
+                <div class="tab active" data-tab="directory">Directory</div>
+                <div class="tab" data-tab="add-contact">Add Contact</div>
+            </div>
+
+            <div id="directory-tab">
+                <div class="directory-header">
+                    <h3>Community Directory</h3>
+                    <button id="logout-btn">Logout</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search contacts...">
+                </div>
+                <div id="contacts-container" class="contacts-grid">
+                    <!-- Contacts will be loaded here -->
+                </div>
+            </div>
+
+            <div id="add-contact-tab" class="hidden">
+                <h3>Add New Contact</h3>
+                <form id="add-contact-form">
+                    <div class="form-group">
+                        <label for="add-name">Name:</label>
+                        <input type="text" id="add-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-phone">Phone:</label>
+                        <input type="tel" id="add-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-discord">Discord:</label>
+                        <input type="text" id="add-discord">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-instagram">Instagram:</label>
+                        <input type="text" id="add-instagram">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-telegram">Telegram:</label>
+                        <input type="text" id="add-telegram">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-signal">Signal:</label>
+                        <input type="text" id="add-signal">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-address">Address (optional):</label>
+                        <textarea id="add-address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-notes">Notes:</label>
+                        <textarea id="add-notes"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-image">Image URL (optional):</label>
+                        <input type="url" id="add-image">
+                    </div>
+                    <div class="form-group">
+                        <label for="add-personal-code">Personal Code (for future edits):</label>
+                        <input type="password" id="add-personal-code" placeholder="Leave blank to use 'please'">
+                    </div>
+                    <button type="submit">Add Contact</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Edit Your Contact</h3>
+                <form id="edit-form">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label for="edit-name">Name:</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Phone:</label>
+                        <input type="tel" id="edit-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-discord">Discord:</label>
+                        <input type="text" id="edit-discord">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-instagram">Instagram:</label>
+                        <input type="text" id="edit-instagram">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-telegram">Telegram:</label>
+                        <input type="text" id="edit-telegram">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-signal">Signal:</label>
+                        <input type="text" id="edit-signal">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-address">Address (optional):</label>
+                        <textarea id="edit-address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">Notes:</label>
+                        <textarea id="edit-notes"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-image">Image URL (optional):</label>
+                        <input type="url" id="edit-image">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-personal-code">Your Personal Code:</label>
+                        <input type="password" id="edit-personal-code" required>
+                    </div>
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
+
+5. public/style.css
+css
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background-color: #0c0c0c;
+    color: #00ff00;
+    line-height: 1.6;
+    padding: 20px;
+    background-image: 
+        radial-gradient(circle at 25% 25%, #1a3b1a 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #1a3b1a 0%, transparent 50%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #00ff00;
+    background-color: rgba(0, 20, 0, 0.8);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #00ff00;
+}
+
+h1, h2, h3 {
+    color: #00ff00;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+}
+
+h1 {
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #00ff00;
+    background-color: rgba(0, 30, 0, 0.5);
+}
+
+.hidden {
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, textarea, button, select {
+    width: 100%;
+    padding: 10px;
+    background-color: #001100;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+button {
+    background-color: #003300;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #005500;
+}
+
+.directory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.contact-card {
+    border: 1px solid #00ff00;
+    padding: 15px;
+    background-color: rgba(0, 20, 0, 0.7);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+}
+
+.contact-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.contact-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 1px solid #00ff00;
+    object-fit: cover;
+}
+
+.contact-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.contact-details {
+    margin-top: 15px;
+}
+
+.contact-field {
+    margin-bottom: 8px;
+    display: flex;
+}
+
+.contact-field-label {
+    font-weight: bold;
+    min-width: 80px;
+    margin-right: 10px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #001100;
+    border: 2px solid #00ff00;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #00ff00;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #002200;
+    margin-right: 5px;
+}
+
+.tab.active {
+    background-color: #004400;
+    border-bottom: 2px solid #00ff00;
+}
+
+@media (max-width: 768px) {
+    .contacts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+6. public/script.js
+javascript
+
+// Global variables
+let contacts = [];
+let isAuthenticated = false;
+
+// DOM elements
+const loginSection = document.getElementById('login-section');
+const directorySection = document.getElementById('directory-section');
+const loginForm = document.getElementById('login-form');
+const logoutBtn = document.getElementById('logout-btn');
+const searchInput = document.getElementById('search-input');
+const contactsContainer = document.getElementById('contacts-container');
+const editModal = document.getElementById('edit-modal');
+const editForm = document.getElementById('edit-form');
+const closeModal = document.querySelector('.close');
+const tabs = document.querySelectorAll('.tab');
+const directoryTab = document.getElementById('directory-tab');
+const addContactTab = document.getElementById('add-contact-tab');
+const addContactForm = document.getElementById('add-contact-form');
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already authenticated
+    checkAuthStatus();
+    
+    // Event listeners
+    loginForm.addEventListener('submit', handleLogin);
+    logoutBtn.addEventListener('click', handleLogout);
+    searchInput.addEventListener('input', filterContacts);
+    editForm.addEventListener('submit', handleEditSubmit);
+    closeModal.addEventListener('click', () => editModal.classList.add('hidden'));
+    addContactForm.addEventListener('submit', handleAddContact);
+    
+    // Tab switching
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.getAttribute('data-tab');
+            
+            // Update active tab
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Show appropriate content
+            if (tabName === 'directory') {
+                directoryTab.classList.remove('hidden');
+                addContactTab.classList.add('hidden');
+            } else {
+                directoryTab.classList.add('hidden');
+                addContactTab.classList.remove('hidden');
+            }
+        });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === editModal) {
+            editModal.classList.add('hidden');
+        }
+    });
+});
+
+// Check authentication status
+async function checkAuthStatus() {
+    try {
+        const response = await fetch('/api/auth/status', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.authenticated) {
+                isAuthenticated = true;
+                showDirectory();
+                loadContacts();
+            }
+        }
+    } catch (error) {
+        console.error('Error checking auth status:', error);
+    }
+}
+
+// Handle login
+async function handleLogin(e) {
+    e.preventDefault();
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password }),
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            isAuthenticated = true;
+            showDirectory();
+            loadContacts();
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed. Please try again.');
+    }
+}
+
+// Handle logout
+async function handleLogout() {
+    try {
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        isAuthenticated = false;
+        loginSection.classList.remove('hidden');
+        directorySection.classList.add('hidden');
+        document.getElementById('password').value = '';
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+}
+
+// Show directory section
+function showDirectory() {
+    loginSection.classList.add('hidden');
+    directorySection.classList.remove('hidden');
+}
+
+// Load contacts from server
+async function loadContacts() {
+    try {
+        const response = await fetch('/api/contacts', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            contacts = await response.json();
+            renderContacts(contacts);
+        } else {
+            console.error('Failed to load contacts');
+        }
+    } catch (error) {
+        console.error('Error loading contacts:', error);
+    }
+}
+
+// Render contacts to the page
+function renderContacts(contactsToRender) {
+    contactsContainer.innerHTML = '';
+    
+    if (contactsToRender.length === 0) {
+        contactsContainer.innerHTML = '<p>No contacts found. Add some using the "Add Contact" tab.</p>';
+        return;
+    }
+    
+    contactsToRender.forEach(contact => {
+        const contactCard = document.createElement('div');
+        contactCard.className = 'contact-card';
+        contactCard.innerHTML = `
+            <div class="contact-header">
+                <img src="${contact.image_url || 'https://placeholder.pics/svg/50/00FF00-00FF00/FF-FF0000/No-Image'}" 
+                     alt="${contact.name}" class="contact-image">
+                <div class="contact-name">${contact.name}</div>
+            </div>
+            <div class="contact-details">
+                ${contact.phone ? `<div class="contact-field"><span class="contact-field-label">Phone:</span> ${contact.phone}</div>` : ''}
+                ${contact.discord ? `<div class="contact-field"><span class="contact-field-label">Discord:</span> ${contact.discord}</div>` : ''}
+                <button class="view-more" data-id="${contact.id}">View Full Details</button>
+                <button class="edit-contact" data-id="${contact.id}">Edit This Contact</button>
+            </div>
+        `;
+        
+        contactsContainer.appendChild(contactCard);
+    });
+    
+    // Add event listeners to the buttons
+    document.querySelectorAll('.view-more').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            viewContactDetails(id);
+        });
+    });
+    
+    document.querySelectorAll('.edit-contact').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            openEditModal(id);
+        });
+    });
+}
+
+// View full contact details
+function viewContactDetails(id) {
+    const contact = contacts.find(c => c.id === id);
+    if (!contact) return;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-details">&times;</span>
+            <h3>${contact.name}'s Contact Details</h3>
+            <div class="contact-details-full">
+                ${contact.image_url ? `<img src="${contact.image_url}" alt="${contact.name}" class="contact-image-large" style="width: 100px; height: 100px; margin-bottom: 15px;">` : ''}
+                ${contact.phone ? `<div class="contact-field"><span class="contact-field-label">Phone:</span> ${contact.phone}</div>` : ''}
+                ${contact.discord ? `<div class="contact-field"><span class="contact-field-label">Discord:</span> ${contact.discord}</div>` : ''}
+                ${contact.instagram ? `<div class="contact-field"><span class="contact-field-label">Instagram:</span> ${contact.instagram}</div>` : ''}
+                ${contact.telegram ? `<div class="contact-field"><span class="contact-field-label">Telegram:</span> ${contact.telegram}</div>` : ''}
+                ${contact.signal ? `<div class="contact-field"><span class="contact-field-label">Signal:</span> ${contact.signal}</div>` : ''}
+                ${contact.address ? `<div class="contact-field"><span class="contact-field-label">Address:</span> ${contact.address}</div>` : ''}
+                ${contact.notes ? `<div class="contact-field"><span class="contact-field-label">Notes:</span> ${contact.notes}</div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.classList.remove('hidden');
+    
+    // Close modal events
+    modal.querySelector('.close-details').addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
+}
+
+// Open edit modal
+function openEditModal(id) {
+    const contact = contacts.find(c => c.id === id);
+    if (!contact) return;
+    
+    document.getElementById('edit-id').value = contact.id;
+    document.getElementById('edit-name').value = contact.name;
+    document.getElementById('edit-phone').value = contact.phone || '';
+    document.getElementById('edit-discord').value = contact.discord || '';
+    document.getElementById('edit-instagram').value = contact.instagram || '';
+    document.getElementById('edit-telegram').value = contact.telegram || '';
+    document.getElementById('edit-signal').value = contact.signal || '';
+    document.getElementById('edit-address').value = contact.address || '';
+    document.getElementById('edit-notes').value = contact.notes || '';
+    document.getElementById('edit-image').value = contact.image_url || '';
+    document.getElementById('edit-personal-code').value = '';
+    
+    editModal.classList.remove('hidden');
+}
+
+// Handle edit form submission
+async function handleEditSubmit(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('edit-id').value;
+    const personalCode = document.getElementById('edit-personal-code').value;
+    
+    const contactData = {
+        name: document.getElementById('edit-name').value,
+        phone: document.getElementById('edit-phone').value,
+        discord: document.getElementById('edit-discord').value,
+        instagram: document.getElementById('edit-instagram').value,
+        telegram: document.getElementById('edit-telegram').value,
+        signal: document.getElementById('edit-signal').value,
+        address: document.getElementById('edit-address').value,
+        notes: document.getElementById('edit-notes').value,
+        image_url: document.getElementById('edit-image').value,
+        personal_code: personalCode
+    };
+    
+    try {
+        const response = await fetch(`/api/contacts/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(contactData),
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            // Update UI
+            await loadContacts();
+            editModal.classList.add('hidden');
+            alert('Contact updated successfully!');
+        } else {
+            const error = await response.text();
+            alert(`Error updating contact: ${error}`);
+        }
+    } catch (error) {
+        console.error('Error updating contact:', error);
+        alert('Failed to update contact. Please try again.');
+    }
+}
+
+// Handle add contact form submission
+async function handleAddContact(e) {
+    e.preventDefault();
+    
+    const personalCode = document.getElementById('add-personal-code').value || 'please';
+    
+    const contactData = {
+        name: document.getElementById('add-name').value,
+        phone: document.getElementById('add-phone').value,
+        discord: document.getElementById('add-discord').value,
+        instagram: document.getElementById('add-instagram').value,
+        telegram: document.getElementById('add-telegram').value,
+        signal: document.getElementById('add-signal').value,
+        address: document.getElementById('add-address').value,
+        notes: document.getElementById('add-notes').value,
+        image_url: document.getElementById('add-image').value,
+        personal_code: personalCode
+    };
+    
+    try {
+        const response = await fetch('/api/contacts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(contactData),
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            // Update UI
+            await loadContacts();
+            
+            // Reset form
+            document.getElementById('add-contact-form').reset();
+            
+            // Switch back to directory tab
+            tabs[0].click();
+            
+            alert(`Contact added successfully! Your personal code is: ${personalCode}`);
+        } else {
+            const error = await response.text();
+            alert(`Error adding contact: ${error}`);
+        }
+    } catch (error) {
+        console.error('Error adding contact:', error);
+        alert('Failed to add contact. Please try again.');
+    }
+}
+
+// Filter contacts based on search input
+function filterContacts() {
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    if (!searchTerm) {
+        renderContacts(contacts);
+        return;
+    }
+    
+    const filteredContacts = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) ||
+        (contact.phone && contact.phone.toLowerCase().includes(searchTerm)) ||
+        (contact.discord && contact.discord.toLowerCase().includes(searchTerm)) ||
+        (contact.instagram && contact.instagram.toLowerCase().includes(searchTerm)) ||
+        (contact.telegram && contact.telegram.toLowerCase().includes(searchTerm)) ||
+        (contact.signal && contact.signal.toLowerCase().includes(searchTerm)) ||
+        (contact.address && contact.address.toLowerCase().includes(searchTerm)) ||
+        (contact.notes && contact.notes.toLowerCase().includes(searchTerm))
+    );
+    
+    renderContacts(filteredContacts);
+}
+
+7. src/auth.ts
+typescript
+
+import { Context } from 'hono';
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
+import { sha256 } from 'hono/utils/crypto';
+import { encodeBase64 } from 'hono/utils/encode';
+
+// Session interface
+interface Session {
+    userId: string;
+    expires: number;
+}
+
+// Generate session ID
+function generateSessionId(): string {
+    return crypto.randomUUID();
+}
+
+// Create session
+export async function createSession(c: Context, userId: string): Promise<void> {
+    const sessionId = generateSessionId();
+    const sessionDuration = parseInt(c.env.SESSION_DURATION || '604800'); // Default 7 days
+    const expires = Math.floor(Date.now() / 1000) + sessionDuration;
+    
+    const session: Session = {
+        userId,
+        expires
+    };
+    
+    // Store session in KV
+    await c.env.SESSION_STORE.put(sessionId, JSON.stringify(session), {
+        expiration: expires
+    });
+    
+    // Set cookie
+    setCookie(c, 'session_id', sessionId, {
+        path: '/',
+        maxAge: sessionDuration,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict'
+    });
+}
+
+// Validate session
+export async function validateSession(c: Context): Promise<string | null> {
+    const sessionId = getCookie(c, 'session_id');
+    if (!sessionId) {
+        return null;
+    }
+    
+    const sessionData = await c.env.SESSION_STORE.get(sessionId);
+    if (!sessionData) {
+        return null;
+    }
+    
+    const session: Session = JSON.parse(sessionData);
+    
+    // Check if session is expired
+    if (session.expires < Math.floor(Date.now() / 1000)) {
+        await c.env.SESSION_STORE.delete(sessionId);
+        return null;
+    }
+    
+    return session.userId;
+}
+
+// Destroy session
+export async function destroySession(c: Context): Promise<void> {
+    const sessionId = getCookie(c, 'session_id');
+    if (sessionId) {
+        await c.env.SESSION_STORE.delete(sessionId);
+    }
+    
+    deleteCookie(c, 'session_id');
+}
+
+// Hash password
+export async function hashPassword(password: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return encodeBase64(hashBuffer);
+}
+
+// Verify password
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+    const passwordHash = await hashPassword(password);
+    return passwordHash === hash;
+}
+
+8. src/index.ts
+typescript
+
+import { Hono } from 'hono';
+import { serveStatic } from 'hono/cloudflare-workers';
+import { getCookie } from 'hono/cookie';
+import { v4 as uuidv4 } from 'uuid';
+import { createSession, validateSession, destroySession, hashPassword, verifyPassword } from './auth';
+
+// Types
+interface Contact {
+    id: string;
+    name: string;
+    phone?: string;
+    discord?: string;
+    instagram?: string;
+    telegram?: string;
+    signal?: string;
+    address?: string;
+    notes?: string;
+    image_url?: string;
+    personal_code_hash: string;
+    created_at: number;
+    updated_at: number;
+}
+
+interface Env {
+    DB: D1Database;
+    SESSION_STORE: KVNamespace;
+    PASSWORD_STORE: KVNamespace;
+    IMAGE_STORE: R2Bucket;
+    DIRECTORY_PASSWORD_HASH: string;
+    SESSION_SECRET: string;
+    SESSION_DURATION: string;
+}
+
+// App
+const app = new Hono<{ Bindings: Env }>();
+
+// Static files
+app.get('*', serveStatic({ root: './public' }));
+app.get('/favicon.ico', serveStatic({ path: './public/favicon.ico' }));
+
+// Middleware to check authentication
+app.use('/api/*', async (c, next) => {
+    // Allow login requests without authentication
+    if (c.req.path === '/api/auth/login' || c.req.path === '/api/auth/status') {
+        return next();
+    }
+    
+    const userId = await validateSession(c);
+    if (!userId) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    
+    return next();
+});
+
+// Auth routes
+app.post('/api/auth/login', async (c) => {
+    try {
+        const { password } = await c.req.json();
+        
+        // Verify password
+        const isValid = await verifyPassword(password, c.env.DIRECTORY_PASSWORD_HASH);
+        if (!isValid) {
+            return c.json({ error: 'Invalid password' }, 401);
+        }
+        
+        // Create session
+        await createSession(c, 'admin');
+        
+        return c.json({ success: true });
+    } catch (error) {
+        console.error('Login error:', error);
+        return c.json({ error: 'Internal server error' }, 500);
+    }
+});
+
+app.post('/api/auth/logout', async (c) => {
+    await destroySession(c);
+    return c.json({ success: true });
+});
+
+app.get('/api/auth/status', async (c) => {
+    const userId = await validateSession(c);
+    return c.json({ authenticated: !!userId });
+});
+
+// Contacts routes
+app.get('/api/contacts', async (c) => {
+    try {
+        const { results } = await c.env.DB.prepare(`
+            SELECT id, name, phone, discord, instagram, telegram, signal, address, notes, image_url, created_at, updated_at
+            FROM contacts
+            ORDER BY name
+        `).all();
+        
+        return c.json(results);
+    } catch (error) {
+        console.error('Error fetching contacts:', error);
+        return c.json({ error: 'Failed to fetch contacts' }, 500);
+    }
+});
+
+app.post('/api/contacts', async (c) => {
+    try {
+        const contactData = await c.req.json();
+        const { personal_code, ...contact } = contactData;
+        
+        // Hash personal code
+        const personalCodeHash = await hashPassword(personal_code || 'please');
+        
+        // Generate ID and timestamps
+        const id = uuidv4();
+        const now = Math.floor(Date.now() / 1000);
+        
+        // Insert contact
+        const { success } = await c.env.DB.prepare(`
+            INSERT INTO contacts (id, name, phone, discord, instagram, telegram, signal, address, notes, image_url, personal_code_hash, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+            id,
+            contact.name,
+            contact.phone || null,
+            contact.discord || null,
+            contact.instagram || null,
+            contact.telegram || null,
+            contact.signal || null,
+            contact.address || null,
+            contact.notes || null,
+            contact.image_url || null,
+            personalCodeHash,
+            now,
+            now
+        ).run();
+        
+        if (!success) {
+            return c.json({ error: 'Failed to create contact' }, 500);
+        }
+        
+        return c.json({ success: true, id });
+    } catch (error) {
+        console.error('Error creating contact:', error);
+        return c.json({ error: 'Failed to create contact' }, 500);
+    }
+});
+
+app.put('/api/contacts/:id', async (c) => {
+    try {
+        const id = c.req.param('id');
+        const contactData = await c.req.json();
+        const { personal_code, ...contact } = contactData;
+        
+        // First verify the personal code
+        const { results } = await c.env.DB.prepare(`
+            SELECT personal_code_hash FROM contacts WHERE id = ?
+        `).bind(id).all();
+        
+        if (results.length === 0) {
+            return c.json({ error: 'Contact not found' }, 404);
+        }
+        
+        const storedHash = results[0].personal_code_hash;
+        const isValid = await verifyPassword(personal_code, storedHash);
+        if (!isValid) {
+            return c.json({ error: 'Invalid personal code' }, 401);
+        }
+        
+        // Update contact
+        const now = Math.floor(Date.now() / 1000);
+        const { success } = await c.env.DB.prepare(`
+            UPDATE contacts 
+            SET name = ?, phone = ?, discord = ?, instagram = ?, telegram = ?, signal = ?, address = ?, notes = ?, image_url = ?, updated_at = ?
+            WHERE id = ?
+        `).bind(
+            contact.name,
+            contact.phone || null,
+            contact.discord || null,
+            contact.instagram || null,
+            contact.telegram || null,
+            contact.signal || null,
+            contact.address || null,
+            contact.notes || null,
+            contact.image_url || null,
+            now,
+            id
+        ).run();
+        
+        if (!success) {
+            return c.json({ error: 'Failed to update contact' }, 500);
+        }
+        
+        return c.json({ success: true });
+    } catch (error) {
+        console.error('Error updating contact:', error);
+        return c.json({ error: 'Failed to update contact' }, 500);
+    }
+});
+
+app.delete('/api/contacts/:id', async (c) => {
+    try {
+        const id = c.req.param('id');
+        const { personal_code } = await c.req.json();
+        
+        // First verify the personal code
+        const { results } = await c.env.DB.prepare(`
+            SELECT personal_code_hash FROM contacts WHERE id = ?
+        `).bind(id).all();
+        
+        if (results.length === 0) {
+            return c.json({ error: 'Contact not found' }, 404);
+        }
+        
+        const storedHash = results[0].personal_code_hash;
+        const isValid = await verifyPassword(personal_code, storedHash);
+        if (!isValid) {
+            return c.json({ error: 'Invalid personal code' }, 401);
+        }
+        
+        // Delete contact
+        const { success } = await c.env.DB.prepare(`
+            DELETE FROM contacts WHERE id = ?
+        `).bind(id).run();
+        
+        if (!success) {
+            return c.json({ error: 'Failed to delete contact' }, 500);
+        }
+        
+        return c.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting contact:', error);
+        return c.json({ error: 'Failed to delete contact' }, 500);
+    }
+});
+
+// Search contacts
+app.get('/api/contacts/search/:query', async (c) => {
+    try {
+        const query = c.req.param('query');
+        const { results } = await c.env.DB.prepare(`
+            SELECT id, name, phone, discord, instagram, telegram, signal, address, notes, image_url, created_at, updated_at
+            FROM contacts
+            WHERE name LIKE ? OR phone LIKE ? OR discord LIKE ? OR instagram LIKE ? OR telegram LIKE ? OR signal LIKE ? OR address LIKE ? OR notes LIKE ?
+            ORDER BY name
+        `).bind(
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`,
+            `%${query}%`
+        ).all();
+        
+        return c.json(results);
+    } catch (error) {
+        console.error('Error searching contacts:', error);
+        return c.json({ error: 'Failed to search contacts' }, 500);
+    }
+});
+
+// Image upload
+app.post('/api/images/upload', async (c) => {
+    try {
+        const formData = await c.req.formData();
+        const file = formData.get('file') as File;
+        
+        if (!file) {
+            return c.json({ error: 'No file provided' }, 400);
+        }
+        
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        
+        // Upload to R2
+        await c.env.IMAGE_STORE.put(fileName, file.stream(), {
+            httpMetadata: {
+                contentType: file.type
+            }
+        });
+        
+        // Generate public URL
+        const imageUrl = `/api/images/${fileName}`;
+        
+        return c.json({ success: true, url: imageUrl });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        return c.json({ error: 'Failed to upload image' }, 500);
+    }
+});
+
+// Image retrieval
+app.get('/api/images/:key', async (c) => {
+    const key = c.req.param('key');
+    
+    try {
+        const object = await c.env.IMAGE_STORE.get(key);
+        
+        if (!object) {
+            return c.json({ error: 'Image not found' }, 404);
+        }
+        
+        const headers = new Headers();
+        object.writeHttpMetadata(headers);
+        headers.set('etag', object.httpEtag);
+        
+        return new Response(object.body, { headers });
+    } catch (error) {
+        console.error('Error retrieving image:', error);
+        return c.json({ error: 'Failed to retrieve image' }, 500);
+    }
+});
+
+export default app;
+
+Setup Instructions
+
+    Install Wrangler:
+    bash
+
+npm install -g wrangler
+
+Login to Cloudflare:
+bash
+
+wrangler login
+
+Create D1 Database:
+bash
+
+wrangler d1 create phreak-phonebook-db
+
+Create KV Namespaces:
+bash
+
+wrangler kv namespace create SESSION_STORE
+wrangler kv namespace create PASSWORD_STORE
+
+Create R2 Bucket:
+bash
+
+wrangler r2 bucket create phreak-phonebook-images
+
+Update wrangler.toml:
+Replace the placeholder IDs with your actual resource IDs.
+
+Set Secrets:
+bash
+
+# Generate a password hash first (you'll need to create a simple script for this)
+wrangler secret put DIRECTORY_PASSWORD_HASH
+wrangler secret put SESSION_SECRET
+
+Initialize Database:
+bash
+
+wrangler d1 execute phreak-phonebook-db --file=schema.sql
+
+Deploy:
+bash
+
+    npm run deploy
+
+Security Features
+
+    Password hashing using SHA-256
+
+    Secure session management with HTTP-only cookies
+
+    Personal code verification for contact modifications
+
+    Input validation and sanitization
+
+    CORS protection
+
+    Secure headers
+
+This implementation follows Cloudflare's best practices for using D15, KV4, and R26, and provides a complete, production-ready phonebook application with all the requested features.

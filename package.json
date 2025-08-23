@@ -1,15 +1,13 @@
 {
-  "name": "phreak-phonebook",
+  "name": "phreax-phonebook",
   "version": "1.0.0",
   "description": "Farewell & Friends Phreak Phonebook",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev",
+    "build": "tsc --noEmit",
     "deploy": "wrangler deploy",
-    "db:create": "wrangler d1 create phreak-phonebook-db",
-    "db:execute": "wrangler d1 execute phreak-phonebook-db --file=schema.sql",
-    "db:local": "wrangler d1 execute phreak-phonebook-db --local --file=schema.sql",
-    "db:studio": "wrangler d1 execute phreak-phonebook-db --local --command='SELECT 1'"
+    "db:execute": "wrangler d1 execute phreak-db --file=schema.sql",
+    "logs": "wrangler tail"
   },
   "dependencies": {
     "hono": "^4.6.0"

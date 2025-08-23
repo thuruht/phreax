@@ -1,0 +1,169 @@
+/* Import Bunny Fonts */
+@import url('https://fonts.bunny.net/css?family=almendra-display:400|orbitron:400,700,900|pixelify-sans:400,500,600,700');
+
+/* General Body Styling */
+body {
+    background-color: #0a0a0a;
+    color: #00ffcc;
+    font-family: 'Pixelify Sans', monospace;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Container */
+.container {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Header Glitch Effect */
+header {
+    font-family: 'Orbitron', 'Pixelify Sans', monospace;
+    font-size: 3em;
+    color: #00ffcc;
+    position: relative;
+    animation: glitch 1s infinite;
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00cc99;
+}
+
+header::before, header::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+header::before {
+    animation: glitchTop 1s infinite linear alternate-reverse;
+    color: #ff00ff;
+    z-index: -1;
+}
+
+header::after {
+    animation: glitchBottom 1s infinite linear alternate-reverse;
+    color: #00ffff;
+    z-index: -2;
+}
+
+/* Hacky Gothic Accent for Big Titles */
+h1 {
+    font-family: 'Almendra Display', 'Orbitron', sans-serif;
+}
+
+/* Form Styling */
+form {
+    margin-top: 20px;
+}
+
+input, button {
+    background: transparent;
+    border: 2px solid #00ffcc;
+    padding: 10px 20px;
+    color: #00ffcc;
+    font-family: 'Pixelify Sans', monospace;
+    margin: 5px;
+    border-radius: 5px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus, button:hover {
+    background: #00ffcc;
+    color: #0a0a0a;
+    box-shadow: 0 0 10px #00ffcc, 0 0 20px #00cc99;
+}
+
+/* Terminal Look */
+.terminal {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00ffcc;
+    padding: 20px;
+    margin-top: 30px;
+    height: 300px;
+    width: 500px;
+    overflow-y: auto;
+    text-align: left;
+    font-family: 'Pixelify Sans', monospace;
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px #00ffcc;
+}
+
+.terminal .output-line {
+    margin: 2px 0;
+    color: #00ffcc;
+    font-family: 'Pixelify Sans', monospace;
+}
+
+/* Terminal Prompt */
+.terminal .terminal-prompt {
+    color: #00cc99;
+    font-weight: bold;
+    font-family: 'Pixelify Sans', monospace;
+}
+
+/* Glitch Animations */
+@keyframes glitch {
+    0% { transform: none; }
+    20% { transform: skew(0.5deg); }
+    40% { transform: skew(-0.5deg); }
+    60% { transform: skew(0.3deg); }
+    80% { transform: skew(-0.3deg); }
+    100% { transform: none; }
+}
+
+@keyframes glitchTop {
+    0% { clip: rect(0, 9999px, 0, 0); }
+    10% { clip: rect(10px, 9999px, 50px, 0); transform: translate(-2px, -2px); }
+    20% { clip: rect(85px, 9999px, 140px, 0); transform: translate(-2px, 2px); }
+    30% { clip: rect(20px, 9999px, 60px, 0); transform: translate(2px, -2px); }
+    40% { clip: rect(40px, 9999px, 80px, 0); transform: translate(2px, 2px); }
+    50% { clip: rect(65px, 9999px, 120px, 0); transform: translate(-2px, -2px); }
+    60% { clip: rect(30px, 9999px, 70px, 0); transform: translate(2px, -2px); }
+    70% { clip: rect(45px, 9999px, 100px, 0); transform: translate(-2px, 2px); }
+    80% { clip: rect(15px, 9999px, 60px, 0); transform: translate(2px, 2px); }
+    90% { clip: rect(55px, 9999px, 110px, 0); transform: translate(-2px, -2px); }
+    100% { clip: rect(0, 9999px, 0, 0); }
+}
+
+@keyframes glitchBottom {
+    0% { clip: rect(0, 9999px, 0, 0); }
+    10% { clip: rect(15px, 9999px, 60px, 0); transform: translate(2px, 2px); }
+    20% { clip: rect(45px, 9999px, 100px, 0); transform: translate(-2px, -2px); }
+    30% { clip: rect(20px, 9999px, 70px, 0); transform: translate(2px, -2px); }
+    40% { clip: rect(55px, 9999px, 110px, 0); transform: translate(-2px, 2px); }
+    50% { clip: rect(30px, 9999px, 80px, 0); transform: translate(2px, 2px); }
+    60% { clip: rect(65px, 9999px, 120px, 0); transform: translate(-2px, -2px); }
+    70% { clip: rect(25px, 9999px, 90px, 0); transform: translate(2px, -2px); }
+    80% { clip: rect(40px, 9999px, 100px, 0); transform: translate(-2px, 2px); }
+    90% { clip: rect(15px, 9999px, 70px, 0); transform: translate(2px, 2px); }
+    100% { clip: rect(0, 9999px, 0, 0); }
+}
+
+/* Scanline Overlay */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 204, 0.05),
+        rgba(0, 255, 204, 0.05) 1px,
+        transparent 2px,
+        transparent 3px
+    );
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
