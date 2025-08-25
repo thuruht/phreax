@@ -333,11 +333,8 @@ function renderContacts(contactsToRender) {
 }
 
 function createAvatarUrl(name) {
-    // Create a simple colored avatar based on name
-    const colors = ['FF6B6B', '4ECDC4', '45B7D1', '96CEB4', 'FECA57', 'FF9FF3', '54A0FF'];
-    const colorIndex = name.length % colors.length;
-    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    return `https://via.placeholder.com/50/${colors[colorIndex]}/FFFFFF?text=${initials}`;
+    // Use local SVG placeholder instead of external service
+    return '/avatar-placeholder.svg';
 }
 
 function escapeHtml(unsafe) {
