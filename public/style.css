@@ -238,13 +238,21 @@ body::after {
     border-radius: 5px;
 }
 
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 /* Logo displayed in header; prefer /freekc.png served from public/ or site root */
 #freekc-logo {
     opacity: 0.87;
-    max-width: 20vw;
+    max-width: 15vw;
     margin: 1rem;
     margin-bottom: 0;
     display: block;
+    align-self: center;
 }
 
 .terminal-prompt, .prompt-text {
