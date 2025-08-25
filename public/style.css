@@ -1,10 +1,13 @@
-/* Self-hosted fonts via BunnyCDN */
+/* Fonts are loaded via Google Fonts in index.html. Keep fallback families here. */
+/* Reinstated BunnyCDN @font-face rules (per user's preference) */
 @font-face {
     font-family: 'Share Tech Mono';
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('https://fonts.bunny.net/sharetechmono/files/share-tech-mono-latin-400-normal.woff2') format('woff2');
+    /* Prefer a self-hosted copy under /public/fonts/share-tech-mono.woff2 if present, then fall back to BunnyCDN */
+    src: url('/fonts/share-tech-mono.woff2') format('woff2'),
+         url('https://fonts.bunny.net/sharetechmono/files/share-tech-mono-latin-400-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -12,7 +15,9 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('https://fonts.bunny.net/orbitron/files/orbitron-latin-400-normal.woff2') format('woff2');
+    /* Self-host at /public/fonts/orbitron-400.woff2 to avoid CDN dependency */
+    src: url('/fonts/orbitron-400.woff2') format('woff2'),
+         url('https://fonts.bunny.net/orbitron/files/orbitron-latin-400-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -20,7 +25,8 @@
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('https://fonts.bunny.net/orbitron/files/orbitron-latin-700-normal.woff2') format('woff2');
+    src: url('/fonts/orbitron-700.woff2') format('woff2'),
+         url('https://fonts.bunny.net/orbitron/files/orbitron-latin-700-normal.woff2') format('woff2');
 }
 
 @font-face {
@@ -28,8 +34,21 @@
     font-style: normal;
     font-weight: 900;
     font-display: swap;
-    src: url('https://fonts.bunny.net/orbitron/files/orbitron-latin-900-normal.woff2') format('woff2');
+    src: url('/fonts/orbitron-900.woff2') format('woff2'),
+         url('https://fonts.bunny.net/orbitron/files/orbitron-latin-900-normal.woff2') format('woff2');
 }
+
+/* To self-host the fonts, download the appropriate .woff2 files into /public/fonts.
+   Example (run locally):
+
+   mkdir -p public/fonts
+   curl -L -o public/fonts/share-tech-mono.woff2 "https://fonts.bunny.net/sharetechmono/files/share-tech-mono-latin-400-normal.woff2"
+   curl -L -o public/fonts/orbitron-400.woff2 "https://fonts.bunny.net/orbitron/files/orbitron-latin-400-normal.woff2"
+   curl -L -o public/fonts/orbitron-700.woff2 "https://fonts.bunny.net/orbitron/files/orbitron-latin-700-normal.woff2"
+   curl -L -o public/fonts/orbitron-900.woff2 "https://fonts.bunny.net/orbitron/files/orbitron-latin-900-normal.woff2"
+
+   Then rebuild and redeploy. Using self-hosted fonts avoids CDN/DNS outages.
+*/
 
 * {
     box-sizing: border-box;
@@ -217,6 +236,15 @@ body::after {
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid #00ff41;
     border-radius: 5px;
+}
+
+/* Logo displayed in header; prefer /freekc.png served from public/ or site root */
+#freekc-logo {
+    opacity: 0.87;
+    max-width: 20vw;
+    margin: 1rem;
+    margin-bottom: 0;
+    display: block;
 }
 
 .terminal-prompt, .prompt-text {

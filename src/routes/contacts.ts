@@ -125,12 +125,24 @@ contactsRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
     ]);
     
     if (!result.success) {
-      return c.json({ error: result.error || 'Failed to create contact' }, 500);
+      // Surface DB error details in non-production environments for debugging
+      const isProd = (c.env.ENVIRONMENT || '').toLowerCase() === 'production';
+      const errorPayload: any = { error: result.error || 'Failed to create contact' };
+      if (!isProd && result.error) {
+        errorPayload.detail = result.error;
+      }
+      console.error('DB insert failed for contact create', { id, error: result.error });
+      return c.json(errorPayload, 500);
     }
-    
+
     return c.json({ success: true, id });
   } catch (error) {
-    console.error('Error creating contact:', error);
+    // Provide more detail when not in production to help debugging frontend 500s
+    console.error('Unhandled exception creating contact:', error);
+    const isProd = (c.env.ENVIRONMENT || '').toLowerCase() === 'production';
+    if (!isProd && error instanceof Error) {
+      return c.json({ error: 'Failed to create contact', detail: error.message }, 500);
+    }
     return c.json({ error: 'Failed to create contact' }, 500);
   }
 });

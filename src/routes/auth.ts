@@ -67,5 +67,3 @@ authRoutes.get('/status', async (c) => {
 });
 
 export default authRoutes;
-
-export default authRoutes;
