@@ -46,8 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const imagePreview = document.getElementById('image-preview');
     const previewImg = document.getElementById('preview-img');
     
+    // Image preview for edit modal
+    const editImageFileInput = document.getElementById('edit-image-file');
+    const editImageUrlInput = document.getElementById('edit-image');
+    const editImagePreview = document.getElementById('edit-image-preview');
+    const editPreviewImg = document.getElementById('edit-preview-img');
+    
     imageFileInput.addEventListener('change', handleImageFileChange);
     imageUrlInput.addEventListener('input', debounce(handleImageUrlChange, 500));
+    
+    editImageFileInput.addEventListener('change', handleEditImageFileChange);
+    editImageUrlInput.addEventListener('input', debounce(handleEditImageUrlChange, 500));
     
     // Tab switching
     tabs.forEach(tab => {
@@ -102,6 +111,7 @@ function hideModal(modal) {
     // Reset forms when closing modals
     if (modal === editModal) {
         document.getElementById('edit-form').reset();
+        document.getElementById('edit-image-preview').classList.add('hidden');
         editError.classList.add('hidden');
     }
 }
@@ -411,6 +421,22 @@ async function handleEditSubmit(e) {
     submitButton.innerHTML = '<span class="spinner"></span>Processing modifications...';
     submitButton.classList.add('glitch');
     
+    // Handle image upload if a file was selected
+    let imageUrl = document.getElementById('edit-image').value.trim();
+    const imageFile = document.getElementById('edit-image-file').files[0];
+    
+    if (imageFile) {
+        try {
+            const uploadedImageUrl = await uploadImage(imageFile);
+            if (uploadedImageUrl) {
+                imageUrl = uploadedImageUrl;
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            showError(editError, 'Failed to upload image, but contact will be updated without it.');
+        }
+    }
+    
     const contactData = {
         name: document.getElementById('edit-name').value.trim(),
         phone: document.getElementById('edit-phone').value.trim(),
@@ -420,7 +446,7 @@ async function handleEditSubmit(e) {
         signal: document.getElementById('edit-signal').value.trim(),
         address: document.getElementById('edit-address').value.trim(),
         notes: document.getElementById('edit-notes').value.trim(),
-        image_url: document.getElementById('edit-image').value.trim(),
+        image_url: imageUrl,
         personal_code: personalCode
     };
     
@@ -599,6 +625,66 @@ async function uploadImage(file) {
     }
     
     throw new Error('Upload failed');
+}
+
+function handleEditImageFileChange(e) {
+    const file = e.target.files[0];
+    const editImagePreview = document.getElementById('edit-image-preview');
+    const editPreviewImg = document.getElementById('edit-preview-img');
+    const editImageUrlInput = document.getElementById('edit-image');
+    
+    if (file) {
+        // Clear URL input when file is selected
+        editImageUrlInput.value = '';
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file.');
+            e.target.value = '';
+            return;
+        }
+        
+        // Validate file size (max 5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('File size must be less than 5MB.');
+            e.target.value = '';
+            return;
+        }
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            editPreviewImg.src = e.target.result;
+            editImagePreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        editImagePreview.classList.add('hidden');
+    }
+}
+
+function handleEditImageUrlChange(e) {
+    const url = e.target.value.trim();
+    const editImagePreview = document.getElementById('edit-image-preview');
+    const editPreviewImg = document.getElementById('edit-preview-img');
+    const editImageFileInput = document.getElementById('edit-image-file');
+    
+    if (url) {
+        // Clear file input when URL is entered
+        editImageFileInput.value = '';
+        
+        // Show preview
+        editPreviewImg.src = url;
+        editImagePreview.classList.remove('hidden');
+        
+        // Hide preview if image fails to load
+        editPreviewImg.onerror = () => {
+            editImagePreview.classList.add('hidden');
+        };
+    } else {
+        editImagePreview.classList.add('hidden');
+    }
 }
 
 function handleImageFileChange(e) {

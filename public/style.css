@@ -239,10 +239,8 @@ body::after {
 }
 
 header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     text-align: center;
+    display: block;
 }
 
 /* Logo displayed in header; prefer /freekc.png served from public/ or site root */
