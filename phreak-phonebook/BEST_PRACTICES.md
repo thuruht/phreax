@@ -55,7 +55,7 @@ app.get('/*', async (c) => {
 ### Wrangler Configuration Structure
 
 ```toml
-name = "phreak-phonebook"
+name = "snowy-paper-f69d"
 main = "./src/index.ts"          # Explicit entry point
 compatibility_date = "2024-08-22"
 compatibility_flags = ["nodejs_compat"]

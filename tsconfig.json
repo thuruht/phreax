@@ -4,7 +4,8 @@
     "lib": ["ES2022", "WebWorker"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["@cloudflare/workers-types"],
+  // Removed @cloudflare/workers-types temporarily so local `npm install` network failure
+  // won't block TypeScript compilation. Re-add this when devDependencies are installed.
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
