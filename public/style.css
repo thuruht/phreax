@@ -401,6 +401,19 @@ header {
     position: relative;
     animation: flicker-header 4s linear infinite;
 }
+header {
+    /* Two-column header: logo on the left, titles/terminal on the right */
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 20px;
+    align-items: center;
+    text-align: left;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px dashed #00ff41;
+    position: relative;
+    animation: flicker-header 4s linear infinite;
+}
 
 @keyframes flicker-header {
     0%, 95%, 100% { opacity: 1; }
@@ -421,7 +434,25 @@ header::before {
 
 @keyframes scroll-left {
     0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+}
+/* Header logo column */
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo displayed in header; prefer /freekc.png served from public/ or site root */
+#freekc-logo {
+    opacity: 0.95;
+    max-width: 160px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.header-text {
+    text-align: left;
 }
 
 h1, h2, h3 {
@@ -1180,6 +1211,17 @@ small {
 
     .tabs {
         justify-content: center;
+    }
+
+    /* Stack header into a single column on small screens */
+    header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .header-text {
+        text-align: center;
     }
 
     .tab {
