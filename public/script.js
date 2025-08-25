@@ -300,15 +300,15 @@ function renderContacts(contactsToRender) {
         const contactCard = document.createElement('div');
         contactCard.className = 'contact-card';
         
-        // Create fallback image URL
-        const imageUrl = contact.image_url || createAvatarUrl(contact.name);
-        
+        // Create fallback image URL and sanitize before injecting
+        const imageUrl = sanitizeImageUrl(contact.image_url || createAvatarUrl(contact.name));
+
         contactCard.innerHTML = `
             <div class="contact-header">
-                <img src="${imageUrl}" 
+                <img src="${escapeHtml(imageUrl)}" 
                      alt="${escapeHtml(contact.name)}" 
                      class="contact-image"
-                     onerror="this.src='${createAvatarUrl(contact.name)}'">
+                     onerror="this.src='${escapeHtml(createAvatarUrl(contact.name))}'">
                 <div class="contact-name">${escapeHtml(contact.name)}</div>
             </div>
             <div class="contact-details">
@@ -356,26 +356,70 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+// Sanitize and validate user-supplied URLs for image src usage.
+// Returns a safe URL or the local placeholder when input is invalid or unsafe.
+function sanitizeImageUrl(url) {
+    if (!url) return createAvatarUrl('');
+    try {
+        // Allow relative paths and common safe protocols
+        if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) {
+            return url;
+        }
+        const parsed = new URL(url);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            return parsed.href;
+        }
+    } catch (e) {
+        // fall through to placeholder
+    }
+    return createAvatarUrl('');
+}
+
+// Create a safe tel: href from freeform phone input (keep digits and plus only)
+function sanitizeTelHref(phone) {
+    if (!phone) return '';
+    const filtered = phone.replace(/[^0-9+]/g, '');
+    return filtered ? `tel:${filtered}` : '';
+}
+
+// Build safe URLs for social usernames (small whitelist)
+function socialUrl(platform, username) {
+    if (!username) return '';
+    const clean = username.replace(/[^a-zA-Z0-9_.-]/g, '');
+    if (!clean) return '';
+    switch (platform) {
+        case 'instagram':
+            return `https://instagram.com/${encodeURIComponent(clean)}`;
+        case 'telegram':
+            return `https://t.me/${encodeURIComponent(clean)}`;
+        default:
+            return '';
+    }
+}
+
 function viewContactDetails(id) {
     const contact = contacts.find(c => c.id === id);
     if (!contact) return;
     
-    const imageUrl = contact.image_url || createAvatarUrl(contact.name);
+    const imageUrl = sanitizeImageUrl(contact.image_url || createAvatarUrl(contact.name));
+    const telHref = contact.phone ? sanitizeTelHref(contact.phone) : '';
+    const instagramHref = contact.instagram ? socialUrl('instagram', contact.instagram) : '';
+    const telegramHref = contact.telegram ? socialUrl('telegram', contact.telegram) : '';
     
     const viewContent = document.getElementById('view-contact-content');
     viewContent.innerHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="${imageUrl}" 
+            <img src="${escapeHtml(imageUrl)}" 
                  alt="${escapeHtml(contact.name)}" 
                  class="contact-image-large"
-                 onerror="this.src='${createAvatarUrl(contact.name)}'">
+                 onerror="this.src='${escapeHtml(createAvatarUrl(contact.name))}'">
             <h3>${escapeHtml(contact.name)}</h3>
         </div>
         <div class="contact-details-full">
-            ${contact.phone ? `<div class="contact-field"><span class="contact-field-label">Phone:</span> <a href="tel:${contact.phone}">${escapeHtml(contact.phone)}</a></div>` : ''}
+            ${contact.phone ? `<div class="contact-field"><span class="contact-field-label">Phone:</span> ${telHref ? `<a href="${escapeHtml(telHref)}">${escapeHtml(contact.phone)}</a>` : escapeHtml(contact.phone)}</div>` : ''}
             ${contact.discord ? `<div class="contact-field"><span class="contact-field-label">Discord:</span> ${escapeHtml(contact.discord)}</div>` : ''}
-            ${contact.instagram ? `<div class="contact-field"><span class="contact-field-label">Instagram:</span> <a href="https://instagram.com/${contact.instagram}" target="_blank">@${escapeHtml(contact.instagram)}</a></div>` : ''}
-            ${contact.telegram ? `<div class="contact-field"><span class="contact-field-label">Telegram:</span> <a href="https://t.me/${contact.telegram}" target="_blank">@${escapeHtml(contact.telegram)}</a></div>` : ''}
+            ${contact.instagram ? `<div class="contact-field"><span class="contact-field-label">Instagram:</span> ${instagramHref ? `<a href="${escapeHtml(instagramHref)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(contact.instagram)}</a>` : `@${escapeHtml(contact.instagram)}`}</div>` : ''}
+            ${contact.telegram ? `<div class="contact-field"><span class="contact-field-label">Telegram:</span> ${telegramHref ? `<a href="${escapeHtml(telegramHref)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(contact.telegram)}</a>` : `@${escapeHtml(contact.telegram)}`}</div>` : ''}
             ${contact.signal ? `<div class="contact-field"><span class="contact-field-label">Signal:</span> ${escapeHtml(contact.signal)}</div>` : ''}
             ${contact.address ? `<div class="contact-field"><span class="contact-field-label">Address:</span> ${escapeHtml(contact.address).replace(/\n/g, '<br>')}</div>` : ''}
             ${contact.notes ? `<div class="contact-field"><span class="contact-field-label">Notes:</span> ${escapeHtml(contact.notes).replace(/\n/g, '<br>')}</div>` : ''}

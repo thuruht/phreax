@@ -97,6 +97,23 @@ contactsRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
     
     // Hash personal code (use default 'please' if none provided)
     const personalCodeHash = await hashPassword(personal_code || 'please');
+
+    // Server-side validation for image_url to avoid storing unsafe javascript: or other schemes
+    function sanitizeImageUrlForServer(url?: string | null) {
+      if (!url) return null;
+      try {
+        if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+        const parsed = new URL(url);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+          return parsed.href;
+        }
+      } catch (e) {
+        // invalid URL
+      }
+      return null;
+    }
+
+    const safeImageUrl = sanitizeImageUrlForServer(contact.image_url || null);
     
     // Generate ID and timestamps
     const id = crypto.randomUUID();
@@ -118,7 +135,7 @@ contactsRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
       contact.signal || null,
       contact.address || null,
       contact.notes || null,
-      contact.image_url || null,
+  safeImageUrl,
       personalCodeHash,
       now,
       now
@@ -181,6 +198,23 @@ contactsRoutes.put('/:id', async (c: Context<{ Bindings: Env }>) => {
       return c.json({ error: 'Invalid personal code' }, 401);
     }
     
+    // Server-side sanitize image_url before update
+    function sanitizeImageUrlForServer(url?: string | null) {
+      if (!url) return null;
+      try {
+        if (url.startsWith('/') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+        const parsed = new URL(url);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+          return parsed.href;
+        }
+      } catch (e) {
+        // invalid URL
+      }
+      return null;
+    }
+
+    const safeImageUrl = sanitizeImageUrlForServer(contact.image_url || null);
+
     // Update contact
     const now = Math.floor(Date.now() / 1000);
     const result = await executeWrite(c.env.DB, `
@@ -197,7 +231,7 @@ contactsRoutes.put('/:id', async (c: Context<{ Bindings: Env }>) => {
       contact.signal || null,
       contact.address || null,
       contact.notes || null,
-      contact.image_url || null,
+      safeImageUrl,
       now,
       id
     ]);

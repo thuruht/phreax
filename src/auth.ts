@@ -79,18 +79,107 @@ export async function destroySession(c: Context): Promise<void> {
 
 // Hash password using Web Crypto API
 export async function hashPassword(password: string): Promise<string> {
+    // Use PBKDF2 with a per-hash salt and return a prefixed format:
+    // pbkdf2$<iterations>$<salt_base64>$<derived_base64>
     const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    
-    // Convert ArrayBuffer to base64
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashBase64 = btoa(String.fromCharCode.apply(null, hashArray));
-    return hashBase64;
+    const iterations = 100_000;
+
+    // Create a random salt (16 bytes)
+    const saltBytes = new Uint8Array(16);
+    crypto.getRandomValues(saltBytes);
+    const saltBase64 = btoa(String.fromCharCode(...Array.from(saltBytes)));
+
+    // Optionally use a server-side pepper if provided (SESSION_SECRET), to be concatenated to password
+    // This provides an extra secret that is not stored with the hash.
+    // Note: SESSION_SECRET may be undefined; use empty string in that case.
+    // We won't store the pepper in the hash; verification must also include it.
+    // The pepper is used by concatenating it to the password before deriving.
+    const pepper = (typeof (globalThis as any).SESSION_SECRET !== 'undefined') ? (globalThis as any).SESSION_SECRET : '';
+
+    const saltedPassword = password + pepper;
+
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(saltedPassword),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+    );
+
+    const derivedBits = await crypto.subtle.deriveBits(
+        {
+            name: 'PBKDF2',
+            salt: encoder.encode(saltBase64),
+            iterations,
+            hash: 'SHA-256'
+        },
+        keyMaterial,
+        256
+    );
+
+    const derived = new Uint8Array(derivedBits);
+    const derivedBase64 = btoa(String.fromCharCode(...Array.from(derived)));
+
+    return `pbkdf2\$${iterations}\$${saltBase64}\$${derivedBase64}`;
 }
 
 // Verify password
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-    const passwordHash = await hashPassword(password);
-    return passwordHash === hash;
+    if (!hash || typeof hash !== 'string') return false;
+
+    const encoder = new TextEncoder();
+
+    // If stored hash is the new pbkdf2 format
+    if (hash.startsWith('pbkdf2$')) {
+        try {
+            const parts = hash.split('$');
+            // parts: ['pbkdf2', iterations, saltBase64, derivedBase64]
+            const iterations = parseInt(parts[1], 10);
+            const saltBase64 = parts[2];
+            const expectedDerived = parts[3];
+
+            const pepper = (typeof (globalThis as any).SESSION_SECRET !== 'undefined') ? (globalThis as any).SESSION_SECRET : '';
+            const saltedPassword = password + pepper;
+
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(saltedPassword),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits']
+            );
+
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode(saltBase64),
+                    iterations,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                256
+            );
+
+            const derived = new Uint8Array(derivedBits);
+            const derivedBase64 = btoa(String.fromCharCode(...Array.from(derived)));
+            return derivedBase64 === expectedDerived;
+        } catch (e) {
+            console.error('Error verifying PBKDF2 hash:', e);
+            return false;
+        }
+    }
+
+    // Legacy: assume raw SHA-256 base64 string (no prefix). Verify for backward compatibility.
+    try {
+        const pepper = (typeof (globalThis as any).SESSION_SECRET !== 'undefined') ? (globalThis as any).SESSION_SECRET : '';
+        const salted = password + pepper;
+        const data = encoder.encode(salted);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashBase64 = btoa(String.fromCharCode(...hashArray));
+        return hashBase64 === hash;
+    } catch (e) {
+        console.error('Error verifying legacy SHA-256 hash:', e);
+        return false;
+    }
 }

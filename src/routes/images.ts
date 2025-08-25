@@ -93,12 +93,25 @@ imagesRoutes.get('/*', async (c: Context<{ Bindings: Env }>) => {
 // Delete an image
 imagesRoutes.delete('/:key', async (c: Context<{ Bindings: Env }>) => {
   try {
-    // Check if the user is authenticated (this is protected by auth middleware)
-    const key = c.req.param('key');
-    
+    // Support deleting by path param or by JSON body (useful when key contains slashes)
+    let key = c.req.param('key') || '';
+
+    if (!key || key === '') {
+      // Try body
+      const body = await c.req.json().catch(() => null);
+      key = body && body.key ? body.key : '';
+    }
+
+    if (!key) {
+      return c.json({ error: 'Image key is required' }, 400);
+    }
+
+    // Defensive: trim leading slashes
+    key = key.replace(/^\/+/, '');
+
     // Delete from R2
     await c.env.IMAGES.delete(key);
-    
+
     return c.json({ success: true });
   } catch (error) {
     console.error('Error deleting image:', error);
