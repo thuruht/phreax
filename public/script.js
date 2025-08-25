@@ -612,19 +612,19 @@ async function handleAddContact(e) {
 async function uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
-    
-    const response = await fetch('/api/images/upload', {
+    const response = await fetch('/api/images', {
         method: 'POST',
         body: formData,
         credentials: 'include'
     });
     
-    if (response.ok) {
-        const data = await response.json();
+    const data = await response.json();
+    if (response.ok && data && data.url) {
         return data.url;
     }
-    
-    throw new Error('Upload failed');
+
+    const err = data && data.error ? data.error : 'Upload failed';
+    throw new Error(err);
 }
 
 function handleEditImageFileChange(e) {

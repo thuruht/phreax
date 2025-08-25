@@ -13,7 +13,11 @@ imagesRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
   try {
     // Check if the user is authenticated (this is protected by auth middleware)
     const formData = await c.req.formData();
-    const imageFile = formData.get('image') as File;
+    // Accept either 'file' (client) or 'image' (alternate) form field names
+    let imageFile = formData.get('file') as File | null;
+    if (!imageFile) {
+      imageFile = formData.get('image') as File | null;
+    }
     
     if (!imageFile) {
       return c.json({ error: 'No image file provided' }, 400);
@@ -39,12 +43,13 @@ imagesRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
       },
     });
     
-    // Generate the public URL
-    const imageUrl = `${c.req.url.split('/api/')[0]}/api/images/${key}`;
-    
+    // Generate the public URL using request origin to avoid issues
+    const origin = new URL(c.req.url).origin;
+    const url = `${origin}/api/images/${key}`;
+
     return c.json({ 
       success: true, 
-      imageUrl,
+      url,
       key
     });
   } catch (error) {
@@ -53,23 +58,29 @@ imagesRoutes.post('/', async (c: Context<{ Bindings: Env }>) => {
   }
 });
 
-// Get an image by key
-imagesRoutes.get('/:key', async (c: Context<{ Bindings: Env }>) => {
+// Get an image by arbitrary key (support slashes using wildcard)
+imagesRoutes.get('/*', async (c: Context<{ Bindings: Env }>) => {
   try {
-    const key = c.req.param('key');
-    
+    // Derive the key from the request path. Example: /api/images/uploads/uuid.png -> uploads/uuid.png
+    const pathname = new URL(c.req.url).pathname;
+    const prefix = '/api/images/';
+    let key = pathname.startsWith(prefix) ? pathname.slice(prefix.length) : pathname.replace(/^\//, '');
+
+    // Defensive: trim leading slashes
+    key = key.replace(/^\/+/, '');
+
     // Get image from R2
     const image = await c.env.IMAGES.get(key);
-    
+
     if (!image) {
       return c.json({ error: 'Image not found' }, 404);
     }
-    
+
     // Get headers and stream the image
     const headers = new Headers();
     image.writeHttpMetadata(headers);
     headers.set('Cache-Control', 'public, max-age=31536000');
-    
+
     return new Response(image.body, {
       headers
     });
