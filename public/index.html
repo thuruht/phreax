@@ -24,8 +24,7 @@
                 <img id="freekc-logo" src="/freekc.png" alt="FreekC logo">
             </div>
             <div class="header-text">
-                <h1>Farewell & Friends</h1>
-                <h2>Phreaky Phonebook</h2>
+                <h1>The Phreaky Phonebook</h1>
                 <div class="terminal-info">
                     <span class="terminal-prompt">[root@phreakc ~]$ access_phonebook.bin</span>
                 </div>
@@ -56,15 +55,15 @@
 
             <div id="directory-tab">
                 <div class="directory-header">
-                    <h3>Farewell & Friends Community Directory</h3>
+                    <h2>Farewell & Friends Community Directory</h2>
                     <button id="logout-btn">End Session</button>
                 </div>
                 <div class="search-container">
                     <input type="text" id="search-input" placeholder="Search contacts...">
                 </div>
                 <div class="terminal-output">
-                    <div class="output-line">[F&F-SYS] Loading encrypted contact database...</div>
-                    <div class="output-line">[F&F-SYS] Decryption in progress...</div>
+                    <div class="output-line">[FF-SYS] Loading encrypted contact database...</div>
+                    <div class="output-line">[FF-SYS] Decryption in progress...</div>
                 </div>
                 <div id="contacts-container" class="contacts-grid">
                     <div id="loading-spinner" class="loading">
@@ -82,9 +81,9 @@
             </div>
 
             <div id="add-contact-tab" class="hidden">
-                <h3>Add New F&F Contact</h3>
+                <h3>Add New Contact</h3>
                 <div class="terminal-prompt-login">
-                    <span class="prompt-text">[F&F-NET]$ add_contact --encrypted</span>
+                    <span class="prompt-text">[FF-NET]$ add_contact --encrypted</span>
                 </div>
                 <form id="add-contact-form">
                     <div class="form-group">
@@ -147,7 +146,7 @@
                 <span class="close">&times;</span>
                 <h3>Edit F&F Contact Record</h3>
                 <div class="terminal-prompt-login">
-                    <span class="prompt-text">[F&F-NET]$ edit_contact --verify</span>
+                    <span class="prompt-text">[FF-NET]$ edit_contact --verify</span>
                 </div>
                 <form id="edit-form">
                     <input type="hidden" id="edit-id">
