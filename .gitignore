@@ -43,6 +43,12 @@ secrets.json
 .env.production.local
 .env.local
 
+# direnv/envrc
+.envrc
+.envrc.local
+/.cloudflare_token
+/.EDIT_wOrKRes
+
 # Logs
 logs
 *.log
