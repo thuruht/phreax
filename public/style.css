@@ -50,6 +50,26 @@
    Then rebuild and redeploy. Using self-hosted fonts avoids CDN/DNS outages.
 */
 
+:root {
+    /* Responsive typographic scale */
+    --fs-base: clamp(14px, 1.6vw, 16px);
+    --fs-small: clamp(12px, 1.1vw, 13px);
+    --fs-h1: clamp(1.6rem, 4.5vw, 3rem);
+    --fs-h2: clamp(1.1rem, 2.2vw + 1rem, 2rem);
+    --fs-h3: clamp(1rem, 2.0vw, 1.5rem);
+
+    /* Spacing scale */
+    --space-xl: clamp(28px, 4.5vw, 48px);
+    --space-lg: clamp(18px, 3vw, 36px);
+    --space-md: clamp(12px, 2vw, 24px);
+    --space-sm: clamp(8px, 1.2vw, 12px);
+
+    /* Card and image sizing */
+    --card-padding: clamp(12px, 2.2vw, 20px);
+    --avatar-sm: clamp(48px, 6vw, 60px);
+    --avatar-lg: clamp(90px, 12vw, 120px);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -58,10 +78,11 @@
 
 body {
     font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-size: var(--fs-base);
     background-color: #000000;
     color: #00ff41;
     line-height: 1.6;
-    padding: 20px;
+    padding: var(--space-lg);
     background-image:
         repeating-linear-gradient(
             90deg,
@@ -206,7 +227,7 @@ body::after {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 30px;
+    padding: var(--space-lg);
     border: 2px solid #00ff41;
     background: linear-gradient(135deg,
         rgba(0, 0, 0, 0.95) 0%,
@@ -307,7 +328,7 @@ header {
 .terminal-prompt, .prompt-text {
     font-family: 'Share Tech Mono', monospace;
     color: #00ff41;
-    font-size: 12px;
+    font-size: var(--fs-small);
     animation: terminal-cursor 1s infinite;
 }
 
@@ -337,7 +358,7 @@ header {
 
 .output-line {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
+    font-size: var(--fs-small);
     color: #40ff80;
     margin: 5px 0;
     animation: type-out 2s ease-out;
@@ -515,7 +536,7 @@ h1, h2, h3 {
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: var(--fs-h1);
     font-weight: 900;
     letter-spacing: 5px;
     margin-bottom: 15px;
@@ -558,12 +579,14 @@ h1::after {
 }
 
 h2 {
-    font-size: 2rem;
+    /* Responsive, clamped size so long titles don't break into single-word lines on small screens */
+    font-size: clamp(1.1rem, 2.2vw + 1rem, 2rem);
     font-weight: 700;
     margin-bottom: 25px;
     text-transform: uppercase;
     letter-spacing: 3px;
     position: relative;
+    line-height: 1.05;
 }
 
 h2::before {
@@ -579,7 +602,7 @@ h2::after {
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: var(--fs-h3);
     font-weight: 700;
     margin-bottom: 20px;
     text-transform: uppercase;
@@ -670,7 +693,7 @@ input, textarea, button, select {
     color: #00ff41;
     font-family: 'Share Tech Mono', 'Courier New', monospace;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: var(--fs-base);
     transition: all 0.3s ease;
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
     position: relative;
@@ -833,7 +856,7 @@ button.glitch {
 
 .contact-card {
     border: 2px solid #00ff41;
-    padding: 20px;
+    padding: var(--card-padding);
     background: linear-gradient(135deg,
         rgba(0, 20, 0, 0.9) 0%,
         rgba(0, 40, 0, 0.7) 50%,
@@ -913,10 +936,10 @@ button.glitch {
 }
 
 .contact-image {
-    width: 60px;
-    height: 60px;
+    width: var(--avatar-sm);
+    height: var(--avatar-sm);
     border-radius: 8px;
-    margin-right: 20px;
+    margin-right: var(--space-md);
     border: 2px solid #00ff41;
     object-fit: cover;
     background: linear-gradient(135deg, #001100, #002200);
@@ -1181,8 +1204,8 @@ button.glitch {
 
 .loading {
     text-align: center;
-    padding: 40px;
-    font-size: 1.2rem;
+    padding: var(--space-md);
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
     color: #88ff88;
 }
 
@@ -1206,10 +1229,10 @@ button.glitch {
 }
 
 .contact-image-large {
-    width: 120px;
-    height: 120px;
+    width: var(--avatar-lg);
+    height: var(--avatar-lg);
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     border: 2px solid #00ff00;
     object-fit: cover;
 }
@@ -1236,7 +1259,9 @@ small {
     }
 
     h2 {
-        font-size: 1.5rem;
+        /* reduce spacing and clamp on smaller screens to avoid excessive wrapping */
+        font-size: clamp(1rem, 3.5vw, 1.6rem);
+        letter-spacing: 1px;
     }
 
     .contacts-grid {
