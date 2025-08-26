@@ -93,18 +93,19 @@ body {
     height: 200%;
     pointer-events: none;
     z-index: -1;
-    opacity: 0.45;
+    opacity: 0.62; /* slightly stronger for more contrast */
     background-repeat: repeat;
     mix-blend-mode: screen;
+    filter: contrast(1.12) saturate(1.05);
 }
 
 /* Use the same SVG tiles but assigned per-layer with different sizes/positions */
-.matrix-layer.layer-1 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" viewBox="0 0 200 400"><text x="10" y="25" font-size="14" fill="%2300ff4125" font-family="monospace">カ</text><text x="35" y="50" font-size="12" fill="%2300ff4120" font-family="monospace">1</text><text x="60" y="75" font-size="16" fill="%2300ff4130" font-family="monospace">0</text><text x="85" y="100" font-size="13" fill="%2300ff4115" font-family="monospace">タ</text></svg>'); background-size: 160px 320px; }
-.matrix-layer.layer-2 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="600" viewBox="0 0 300 600"><text x="20" y="30" font-size="15" fill="%2300ff4118" font-family="monospace">Z</text><text x="70" y="80" font-size="12" fill="%2300ff4125" font-family="monospace">0</text></svg>'); background-size: 260px 520px; }
-.matrix-layer.layer-3 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="300" viewBox="0 0 150 300"><text x="5" y="20" font-size="13" fill="%2300ff4120" font-family="monospace">ア</text><text x="30" y="45" font-size="11" fill="%2300ff4115" font-family="monospace">3</text></svg>'); background-size: 130px 260px; }
-.matrix-layer.layer-4 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="240" viewBox="0 0 120 240"><text x="10" y="20" font-size="12" fill="%2300ff4125" font-family="monospace">0</text><text x="40" y="60" font-size="14" fill="%2300ff4120" font-family="monospace">1</text></svg>'); background-size: 120px 240px; }
-.matrix-layer.layer-5 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="160" viewBox="0 0 80 160"><text x="8" y="18" font-size="10" fill="%2300ff4128" font-family="monospace">ナ</text></svg>'); background-size: 80px 160px; }
-.matrix-layer.layer-6 { background-image: linear-gradient(0deg, rgba(0,255,65,0.02), rgba(0,255,65,0.02)); background-size: 40px 40px; opacity: 0.08; }
+.matrix-layer.layer-1 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" viewBox="0 0 200 400"><text x="10" y="25" font-size="14" fill="%2300ff4125" font-family="monospace">カ</text><text x="35" y="50" font-size="12" fill="%2300ff4120" font-family="monospace">1</text><text x="60" y="75" font-size="16" fill="%2300ff4130" font-family="monospace">0</text><text x="85" y="100" font-size="13" fill="%2300ff4115" font-family="monospace">タ</text></svg>'); background-size: 120px 240px; }
+.matrix-layer.layer-2 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="600" viewBox="0 0 300 600"><text x="20" y="30" font-size="15" fill="%2300ff4118" font-family="monospace">Z</text><text x="70" y="80" font-size="12" fill="%2300ff4125" font-family="monospace">0</text></svg>'); background-size: 200px 400px; }
+.matrix-layer.layer-3 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="300" viewBox="0 0 150 300"><text x="5" y="20" font-size="13" fill="%2300ff4120" font-family="monospace">ア</text><text x="30" y="45" font-size="11" fill="%2300ff4115" font-family="monospace">3</text></svg>'); background-size: 90px 180px; }
+.matrix-layer.layer-4 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="240" viewBox="0 0 120 240"><text x="10" y="20" font-size="12" fill="%2300ff4125" font-family="monospace">0</text><text x="40" y="60" font-size="14" fill="%2300ff4120" font-family="monospace">1</text></svg>'); background-size: 90px 180px; }
+.matrix-layer.layer-5 { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="160" viewBox="0 0 80 160"><text x="8" y="18" font-size="10" fill="%2300ff4128" font-family="monospace">ナ</text></svg>'); background-size: 60px 120px; }
+.matrix-layer.layer-6 { background-image: linear-gradient(0deg, rgba(0,255,65,0.03), rgba(0,255,65,0.03)); background-size: 40px 40px; opacity: 0.12; }
 
 /* Animate each layer using translateY with unique durations and negative delays to desynchronize */
 .matrix-layer.layer-1 { animation: fall-1 20s linear infinite; animation-delay: -3.2s; }
@@ -150,7 +151,7 @@ body {
 
 /* Reduce opacity on small screens so it doesn't overwhelm content */
 @media (max-width: 768px) {
-    .matrix-layer { opacity: 0.25; }
+    .matrix-layer { opacity: 0.35; }
 }
 
 
