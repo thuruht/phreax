@@ -1185,14 +1185,24 @@ button.glitch {
 .tab.active::after {
     content: '[ACTIVE]';
     position: absolute;
-    top: -8px;
-    right: -5px;
-    font-size: 8px;
+    /* place vertically centered on the right edge and rotate counter-clockwise */
+    top: 50%;
+    right: -12px;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center;
+    font-size: 9px;
     background: #ff6600;
     color: #000;
-    padding: 2px 4px;
-    border-radius: 2px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     animation: tab-active-blink 1s infinite;
+}
+
+/* Make room for the rotated badge so it doesn't overlap tab text */
+.tab.active {
+    padding-right: 34px;
 }
 
 @keyframes tab-active-blink {
@@ -1383,6 +1393,15 @@ small {
         flex: 1;
         text-align: center;
         margin-right: 5px;
+    }
+
+    /* On smaller screens, don't rotate the badge (avoid overflow) */
+    .tab.active::after {
+        transform: none;
+        top: -8px;
+        right: -5px;
+        font-size: 8px;
+        padding: 2px 4px;
     }
 
     .contact-actions {
