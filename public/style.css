@@ -477,12 +477,28 @@ header {
     border-bottom: 2px dashed #00ff41;
     position: relative;
     animation: flicker-header 4s linear infinite;
-    overflow: hidden;
+    overflow: visible;
+}
+
+/* Absolutely positioned decorative logo so it doesn't affect header flow */
+.header-logo {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(480px, 60%);
+    height: min(160px, 28%);
     background-image: url('/freekc.png');
     background-repeat: no-repeat;
-    background-position: center top;
+    background-position: center center;
     background-size: contain;
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
 }
+
+/* Keep header content above the logo */
+.container > header > * { position: relative; z-index: 1; }
 
 @keyframes flicker-header {
     0%, 95%, 100% { opacity: 1; }
@@ -1235,6 +1251,70 @@ button.glitch {
     margin-bottom: var(--space-md);
     border: 2px solid #00ff00;
     object-fit: cover;
+}
+
+/* Screen-reader only helper */
+.sr-only {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+}
+
+/* Accessible focus styles */
+:focus {
+    outline: 3px solid #40ff80;
+    outline-offset: 2px;
+}
+
+/* Style tel/mailto/external links consistently inside modals and contact cards */
+.contact-field a, .modal-content a {
+    color: #a8ffb0;
+    text-decoration: underline dotted;
+    background: linear-gradient(90deg, rgba(0,255,65,0.03), rgba(0,255,65,0.03));
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.contact-field a:hover, .modal-content a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Make tel: and mailto: links more legible with an icon-like pseudo */
+.contact-field a[href^="tel:"]::before,
+.modal-content a[href^="tel:"]::before {
+    content: '\260E'; /* phone glyph */
+    margin-right: 6px;
+    color: #ffd27a;
+}
+.contact-field a[href^="mailto:"]::before,
+.modal-content a[href^="mailto:"]::before {
+    content: '\2709'; /* envelope glyph */
+    margin-right: 6px;
+    color: #ffd27a;
+}
+
+/* External links get an external icon */
+.contact-field a[target="_blank"]::after,
+.modal-content a[target="_blank"]::after {
+    content: '\2197';
+    margin-left: 6px;
+    font-size: 0.9em;
+    color: #ffd27a;
+}
+
+/* Modal typography improvements for readability */
+.modal-content {
+    font-size: var(--fs-base);
+    line-height: 1.45;
+    color: #c9ffd3;
+}
+
+/* Ensure modal content is scrollable and focus-trap friendly */
+.modal-content:focus {
+    outline: none;
 }
 
 small {

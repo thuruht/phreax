@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+            <!-- Decorative logo placed absolutely so it doesn't affect header layout -->
+            <div class="header-logo" aria-hidden="true"></div>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farewell & Friends - Phreaky Phonebook</title>
@@ -146,10 +148,10 @@
         </div>
 
         <!-- Edit Modal -->
-        <div id="edit-modal" class="modal hidden">
+        <div id="edit-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" aria-hidden="true">
             <div class="modal-content">
-                <span class="close">&times;</span>
-                <h3>Edit F&F Contact Record</h3>
+                <span class="close" role="button" aria-label="Close">&times;</span>
+                <h3 id="edit-modal-title">Edit F&F Contact Record</h3>
                 <div class="terminal-prompt-login">
                     <span class="prompt-text">[FF-NET]$ edit_contact --verify</span>
                 </div>
@@ -210,9 +212,10 @@
         </div>
 
         <!-- View Contact Modal -->
-        <div id="view-modal" class="modal hidden">
+        <div id="view-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="view-modal-title" aria-hidden="true">
             <div class="modal-content">
-                <span class="close-view">&times;</span>
+                <span class="close-view" role="button" aria-label="Close view">&times;</span>
+                <h3 id="view-modal-title" class="sr-only">View Contact</h3>
                 <div id="view-contact-content">
                     <!-- Contact details will be inserted here -->
                 </div>
