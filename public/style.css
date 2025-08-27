@@ -480,24 +480,7 @@ header {
     overflow: visible;
 }
 
-/* Absolutely positioned decorative logo so it doesn't affect header flow */
-.header-logo {
-    position: absolute;
-    inset: 0 auto auto 0; /* keep it positioned relative to header */
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: min(800px, 80%);
-    height: clamp(96px, 22vw, 220px);
-    max-height: 220px;
-    background-image: url('/freekc.png');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;
-    opacity: 0.28; /* a bit more visible */
-    pointer-events: none;
-    z-index: 0; /* behind header content */
-}
+/* decorative header logo removed */
 
 /* Keep header content above the logo */
 .container > header > * { position: relative; z-index: 1; }
@@ -524,15 +507,9 @@ header::before {
     0% { transform: translateX(100%); }
 }
 /* Header logo column */
-/* Provide a subtle overlay so header text remains readable over the background logo */
+/* header overlay removed so decorative logo shows through */
 .container > header::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    /* slightly lighter overlay so the decorative logo shows through more */
-    background: linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32));
-    pointer-events: none;
-    z-index: 1;
+    content: none;
 }
 .container > header > * { position: relative; z-index: 2; }
 
@@ -610,16 +587,9 @@ h2 {
     line-height: 1.05;
 }
 
-h2::before {
-    content: '# ';
-    color: #cc0000;
-    font-weight: bold;
-}
-
+h2::before,
 h2::after {
-    content: ' #';
-    color: #cc0000;
-    font-weight: bold;
+    content: none;
 }
 
 h3 {
