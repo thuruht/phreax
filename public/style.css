@@ -114,7 +114,7 @@ body {
     height: 200%;
     pointer-events: none;
     z-index: -1;
-    opacity: 0.62; /* slightly stronger for more contrast */
+    opacity: 0.69; /* slightly stronger for more contrast */
     background-repeat: repeat;
     mix-blend-mode: screen;
     filter: contrast(1.12) saturate(1.05);
@@ -317,7 +317,7 @@ body::after {
     padding: 10px;
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid #00ff41;
-    border-radius: 5px;
+    border-radius: 5px;                                                                                                                      
 }
 
 header {
@@ -515,6 +515,7 @@ header::before {
     margin-bottom: 20px;
     opacity: 0.6;
     animation: scroll-left 15s linear infinite;
+    text-shadow: #88ff8833 0 0 0.5px;
 }
 
 @keyframes scroll-left {
@@ -1038,13 +1039,13 @@ button.glitch {
 
 .contact-field-label::before {
     content: '[';
-    color: #ff6600;
+    color: #fc191c;
     margin-right: 2px;
 }
 
 .contact-field-label::after {
     content: ']';
-    color: #ff6600;
+    color: #fc191c;
     margin-left: 2px;
 }
 
@@ -1093,12 +1094,15 @@ button.glitch {
     right: 20px;
     font-size: 28px;
     cursor: pointer;
-    color: #ff6600;
+    color: #fc191c;
     font-weight: bold;
 }
 
 .close:hover, .close-view:hover {
-    color: #ff8800;
+    color: #996655;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+    transform: scale(1.2);
+    transition: all 0.3s ease;
 }
 
 .tabs {
