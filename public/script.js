@@ -58,12 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
     editImageFileInput.addEventListener('change', handleEditImageFileChange);
     editImageUrlInput.addEventListener('input', debounce(handleEditImageUrlChange, 500));
     
-    // Tab switching
+    // Tab switching - support click, pointerup and touchstart fallbacks for mobile
     tabs.forEach(tab => {
+        // existing click handler
         tab.addEventListener('click', () => {
             const tabName = tab.getAttribute('data-tab');
             switchTab(tabName);
         });
+
+        // pointerup helps on many mobile browsers where click can be delayed or swallowed
+        tab.addEventListener('pointerup', (e) => {
+            // only primary pointer
+            if (e.button && e.button !== 0) return;
+            const tabName = tab.getAttribute('data-tab');
+            switchTab(tabName);
+        }, { passive: true });
+
+        // fallback for older mobile browsers without PointerEvent
+        tab.addEventListener('touchstart', (e) => {
+            const tabName = tab.getAttribute('data-tab');
+            if (tabName) {
+                switchTab(tabName);
+            }
+        }, { passive: true });
     });
     
     // Close modals when clicking outside

@@ -1087,6 +1087,27 @@ button.glitch {
     position: relative;
 }
 
+/* Ensure decorative background layers and pseudo-elements never capture pointer events */
+body::before,
+body::after,
+.matrix-layer,
+.matrix-layer * {
+    pointer-events: none !important;
+}
+
+/* Bring the tabs and their children to the front so touches reach them on mobile */
+.tabs {
+    position: relative; /* create stacking context */
+    z-index: 2000;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab {
+    position: relative;
+    z-index: 2001;
+    touch-action: manipulation;
+}
+
 .tabs::after {
     content: '';
     position: absolute;
